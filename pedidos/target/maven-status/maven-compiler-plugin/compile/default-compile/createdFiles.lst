@@ -1,5 +1,0 @@
-com\clothesrecovery\pedidos\model\Pedido.class
-com\clothesrecovery\pedidos\PedidosApplication.class
-com\clothesrecovery\pedidos\controller\PedidoController.class
-com\clothesrecovery\pedidos\repository\PedidoRepository.class
-com\clothesrecovery\pedidos\service\PedidoService.class
