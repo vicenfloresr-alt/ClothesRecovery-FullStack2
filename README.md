@@ -19,7 +19,11 @@ Todas las funcionalidades se comunican a través de un **API Gateway**, que es c
 
 
  ## Frontend
-- Debido que actualmente el frontend aun no tiene un backend conectado (pero en el futuro se hara) 
+- Debido que actualmente el frontend aun no tiene un backend conectado (pero en el futuro se hara)
+- igual hace que el carrito se haga pero no supe como hacerlo
+- faltan las vistas de admin
+- pero todo esto se terminaran mediados de noviembre diciembre cuando el frontend y backend se conecten
+  
   
 ## Tecnologías usadas
  
