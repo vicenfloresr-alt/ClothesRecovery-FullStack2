@@ -16,7 +16,11 @@ Permite gestionar una tienda de ropa con 5 funcionalidades principales:
 Todas las funcionalidades se comunican a través de un **API Gateway**, que es como la puerta de entrada del sistema.
  
 ---
- 
+
+
+ ## Frontend
+- Debido que actualmente el frontend aun no tiene un backend conectado (pero en el futuro se hara) 
+  
 ## Tecnologías usadas
  
 - Java 21
