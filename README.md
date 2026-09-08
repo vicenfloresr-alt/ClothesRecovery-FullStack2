@@ -23,3 +23,6 @@ Todas las funcionalidades se comunican a través de un **API Gateway**, que es c
 - Spring Boot 4.0.6
 - MySQL (base de datos)
 - Maven (para compilar y correr el proyecto)
+- HTML 5.0
+- CSS & BootStrap
+- JavaScript
