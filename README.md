@@ -1,6 +1,6 @@
 # ClothesRecovery - Tienda de Ropa Online
  
-Proyecto fullstack de una tienda de ropa online. Está hecho con **Java + Spring Boot** y usa una arquitectura de microservicios, lo que significa que cada parte del sistema corre como un programa separado.
+Proyecto fullstack de una tienda de ropa online. Está hecho con **Java + Spring Boot + HTML +CSS + Javascript** y usa una arquitectura de microservicios, lo que significa que cada parte del sistema corre como un programa separado.
  
 ---
  
