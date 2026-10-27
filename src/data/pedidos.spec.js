@@ -112,4 +112,20 @@ describe('pedidos.js', () => {
       creado = null;
     });
   });
+
+  describe('con localStorage simulado (mock)', () => {
+    it('agregarPedido llama a localStorage.setItem con la clave de pedidos', () => {
+      const espia = spyOn(Storage.prototype, 'setItem').and.callThrough();
+      creado = agregarPedido(datos);
+      expect(espia).toHaveBeenCalledWith('pedidos-clothesrecovery', jasmine.any(String));
+    });
+
+    it('si localStorage falla (lleno o bloqueado), el pedido igual se crea en memoria', () => {
+      spyOn(Storage.prototype, 'setItem').and.throwError('almacenamiento lleno');
+      expect(() => {
+        creado = agregarPedido(datos);
+      }).not.toThrow();
+      expect(obtenerPedidoPorNumero(creado.numero)).not.toBeNull();
+    });
+  });
 });

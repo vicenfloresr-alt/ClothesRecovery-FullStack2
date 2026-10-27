@@ -34,15 +34,21 @@ describe('ProductoCard', () => {
     expect(screen.getByText(formatearPrecio(calcularPrecioOferta(producto.precio)))).toBeTruthy();
   });
 
-  it('al hacer clic llama a onAgregar con el precio que se cobra', () => {
-    let recibido = null;
-    const producto = montar('POL-002', (p) => {
-      recibido = p;
-      return true;
-    });
+  it('al hacer clic llama una vez a onAgregar con el precio que se cobra', () => {
+    // Mock: función espía que registra con qué datos la llamaron
+    const onAgregar = jasmine.createSpy('onAgregar').and.returnValue(true);
+    const producto = montar('POL-002', onAgregar);
     fireEvent.click(screen.getByText('Añadir al carrito'));
-    expect(recibido.codigo).toBe('POL-002');
-    expect(recibido.precio).toBe(calcularPrecioOferta(producto.precio));
+    expect(onAgregar).toHaveBeenCalledTimes(1);
+    expect(onAgregar).toHaveBeenCalledWith(
+      jasmine.objectContaining({ codigo: 'POL-002', precio: calcularPrecioOferta(producto.precio) })
+    );
+  });
+
+  it('no llama a onAgregar si nadie hace clic', () => {
+    const onAgregar = jasmine.createSpy('onAgregar');
+    montar('POL-001', onAgregar);
+    expect(onAgregar).not.toHaveBeenCalled();
   });
 
   it('si onAgregar devuelve false avisa que ya está todo el stock en el carrito', () => {

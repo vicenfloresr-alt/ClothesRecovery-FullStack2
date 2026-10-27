@@ -7,6 +7,7 @@ import {
   obtenerProductoPorCodigo,
   obtenerProductosPorCategoria,
   obtenerProductosEnOferta,
+  buscarProductos,
   agregarProducto,
   editarProducto,
   eliminarProducto,
@@ -159,6 +160,44 @@ describe('productos.js', () => {
 
     it('no falla si el código no existe', () => {
       expect(() => descontarStock('XXX-999', 1)).not.toThrow();
+    });
+  });
+
+  describe('buscarProductos (buscador y filtros)', () => {
+    it('sin texto ni categoría devuelve todos los productos', () => {
+      expect(buscarProductos('', '').length).toBe(obtenerProductos().length);
+    });
+
+    it('busca por texto del nombre sin importar mayúsculas', () => {
+      const resultado = buscarProductos('POLERA', '');
+      expect(resultado.length).toBeGreaterThan(0);
+      for (let i = 0; i < resultado.length; i++) {
+        expect(resultado[i].nombre.toLowerCase()).toContain('polera');
+      }
+    });
+
+    it('busca por código', () => {
+      const resultado = buscarProductos('cha-001', '');
+      expect(resultado.length).toBe(1);
+      expect(resultado[0].codigo).toBe('CHA-001');
+    });
+
+    it('filtra por categoría', () => {
+      const resultado = buscarProductos('', 'Calzado');
+      expect(resultado.length).toBe(2);
+    });
+
+    it('combina texto y categoría', () => {
+      expect(buscarProductos('botas', 'Calzado').length).toBe(1);
+      expect(buscarProductos('botas', 'Poleras').length).toBe(0);
+    });
+
+    it('devuelve arreglo vacío si nada coincide', () => {
+      expect(buscarProductos('zzzzzz', '')).toEqual([]);
+    });
+
+    it('ignora espacios al inicio y al final del texto', () => {
+      expect(buscarProductos('  botas  ', '').length).toBe(1);
     });
   });
 });

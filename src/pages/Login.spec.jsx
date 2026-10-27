@@ -1,15 +1,18 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import Login from './Login';
+import { SesionProvider } from '../context/SesionContext';
 
 function montar() {
   render(
-    <MemoryRouter initialEntries={['/login']}>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<h1>PAGINA-INICIO</h1>} />
-      </Routes>
-    </MemoryRouter>
+    <SesionProvider>
+      <MemoryRouter initialEntries={['/login']}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<h1>PAGINA-INICIO</h1>} />
+        </Routes>
+      </MemoryRouter>
+    </SesionProvider>
   );
 }
 
@@ -20,7 +23,11 @@ function iniciarSesion(correo, clave) {
 }
 
 describe('Login', () => {
-  afterEach(cleanup);
+  beforeEach(() => localStorage.clear());
+  afterEach(() => {
+    cleanup();
+    localStorage.clear();
+  });
 
   it('con credenciales correctas navega al inicio', () => {
     montar();
@@ -38,5 +45,21 @@ describe('Login', () => {
   it('no muestra el error antes de enviar el formulario', () => {
     montar();
     expect(screen.queryByText('Correo o contraseña incorrectos.')).toBeNull();
+  });
+
+  it('con credenciales correctas guarda la sesión (sin la contraseña)', () => {
+    const espia = spyOn(Storage.prototype, 'setItem').and.callThrough();
+    montar();
+    iniciarSesion('pixu@clothesrecovery.cl', '12345');
+    expect(espia).toHaveBeenCalledWith('sesion-clothesrecovery', jasmine.any(String));
+    const guardado = JSON.parse(localStorage.getItem('sesion-clothesrecovery'));
+    expect(guardado.correo).toBe('pixu@clothesrecovery.cl');
+    expect(guardado.password).toBeUndefined();
+  });
+
+  it('con clave incorrecta no guarda ninguna sesión', () => {
+    montar();
+    iniciarSesion('pixu@clothesrecovery.cl', 'mala');
+    expect(localStorage.getItem('sesion-clothesrecovery')).toBeNull();
   });
 });

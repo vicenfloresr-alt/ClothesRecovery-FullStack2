@@ -140,4 +140,18 @@ describe('CarritoContext', () => {
     montar();
     expect(texto('unidades')).toBe('1');
   });
+
+  it('guarda en localStorage usando setItem con la clave del carrito (espía)', () => {
+    montar();
+    const espia = spyOn(Storage.prototype, 'setItem').and.callThrough();
+    fireEvent.click(screen.getByText('add-pol'));
+    expect(espia).toHaveBeenCalledWith('carrito-clothesrecovery', jasmine.any(String));
+  });
+
+  it('si localStorage falla, el carrito sigue funcionando en memoria', () => {
+    montar();
+    spyOn(Storage.prototype, 'setItem').and.throwError('almacenamiento lleno');
+    fireEvent.click(screen.getByText('add-pol'));
+    expect(texto('unidades')).toBe('1');
+  });
 });

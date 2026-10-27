@@ -1,4 +1,4 @@
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import CompraResultado from './CompraResultado';
 import { agregarPedido, eliminarPedido } from '../data/pedidos';
@@ -69,5 +69,19 @@ describe('CompraResultado', () => {
       </MemoryRouter>
     );
     expect(screen.getByText('Pedido no encontrado')).toBeTruthy();
+  });
+
+  it('"Imprimir boleta en PDF" llama a window.print (mock para no abrir el diálogo real)', () => {
+    const espia = spyOn(window, 'print');
+    pedido = montarConPedido(true, 17980);
+    fireEvent.click(screen.getByText('Imprimir boleta en PDF'));
+    expect(espia).toHaveBeenCalledTimes(1);
+  });
+
+  it('"Enviar boleta por email" muestra el mensaje con el correo del cliente', () => {
+    pedido = montarConPedido(true, 17980);
+    expect(screen.queryByText(/Se ha enviado la boleta/)).toBeNull();
+    fireEvent.click(screen.getByText('Enviar boleta por email'));
+    expect(screen.getByText('Se ha enviado la boleta a ana@correo.cl')).toBeTruthy();
   });
 });
