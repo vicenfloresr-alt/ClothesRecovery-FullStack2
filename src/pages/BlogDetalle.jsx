@@ -2,9 +2,6 @@ import { useParams, Link } from 'react-router-dom';
 import { obtenerBlogPorSlug } from '../data/blogs';
 import EquipoSeccion from '../components/EquipoSeccion';
 
-// Misma estructura que blog-items.html del sitio base: breadcrumb,
-// tarjeta con imagen + texto del post, y el mismo bloque de equipo al
-// final que trae la plantilla.
 function BlogDetalle() {
   const { slug } = useParams();
   const blog = obtenerBlogPorSlug(slug);

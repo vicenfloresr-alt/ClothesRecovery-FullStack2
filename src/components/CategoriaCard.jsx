@@ -1,8 +1,5 @@
 import { Link } from 'react-router-dom';
 
-// Tarjeta de categoría con la misma estructura que usa el template base
-// (card + card-img-top + card-body + botón "Explorar"), con nuestros
-// colores encima.
 function CategoriaCard({ categoria }) {
   return (
     <div className="col-md-3 col-6">

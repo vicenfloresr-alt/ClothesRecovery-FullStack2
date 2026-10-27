@@ -4,10 +4,6 @@ import ProductoCard from '../components/ProductoCard';
 import CategoriaCard from '../components/CategoriaCard';
 import { useCarrito } from '../context/CarritoContext';
 
-// Misma estructura que el index.html del template base: carrusel de hero,
-// sección de Categorías, sección de Productos. Se le quitó la sección de
-// Contacto embebida porque esa vista ya tiene su propia página (siguiendo
-// el diagrama de navegación del Anexo 1, donde Contacto es un nodo aparte).
 function Home() {
   const { agregarAlCarrito } = useCarrito();
   const categorias = obtenerCategorias();
@@ -20,7 +16,6 @@ function Home() {
 
   return (
     <main>
-      {/* Carrusel (igual estructura que el template, con nuestro contenido) */}
       <div id="carouselHome" className="carousel slide" data-bs-ride="carousel">
         <div className="carousel-indicators">
           <button type="button" data-bs-target="#carouselHome" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
@@ -60,7 +55,6 @@ function Home() {
         </button>
       </div>
 
-      {/* Categorías */}
       <section className="container py-5">
         <h2 className="text-center mb-4">Categorías</h2>
         <div className="row g-4">
@@ -70,7 +64,6 @@ function Home() {
         </div>
       </section>
 
-      {/* Productos */}
       <section className="py-5" style={{ backgroundColor: '#0f0f11' }}>
         <div className="container">
           <h2 className="text-center mb-4">Destacados de la semana</h2>

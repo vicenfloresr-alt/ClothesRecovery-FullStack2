@@ -1,9 +1,5 @@
 import EquipoSeccion from '../components/EquipoSeccion';
 
-// Misma estructura que nosotros.html del sitio base: una tarjeta grande
-// con imagen de cabecera, varias secciones de texto (historia, misión,
-// visión) y el bloque de equipo al final. Cambia el contenido (nuestra
-// historia en vez de la de "RetroGaming Haven") y los colores.
 function Nosotros() {
   return (
     <main>

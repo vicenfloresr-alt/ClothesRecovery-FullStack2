@@ -2,8 +2,6 @@ import { obtenerProductosEnOferta, PORCENTAJE_DESCUENTO } from '../data/producto
 import ProductoCard from '../components/ProductoCard';
 import { useCarrito } from '../context/CarritoContext';
 
-// Misma estructura que ofertas.html del sitio base: un título y una grilla
-// de tarjetas con el precio anterior tachado y el precio nuevo.
 function Ofertas() {
   const { agregarAlCarrito } = useCarrito();
   const productos = obtenerProductosEnOferta();

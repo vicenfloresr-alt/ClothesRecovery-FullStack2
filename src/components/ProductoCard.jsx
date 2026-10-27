@@ -2,14 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatearPrecio, estaEnOferta, obtenerPrecioFinal } from '../data/productos';
 
-// Misma estructura de tarjeta que trae el sitio base (card + card-producto
-// + card-img-top + card-body), con nuestros productos y colores reales.
-// Recibe el producto como prop y una función "onAgregar" (así el padre
-// decide qué pasa al añadir, el componente solo avisa el clic).
-// Si el producto está en oferta, muestra el precio anterior tachado y el
-// precio nuevo, igual que las tarjetas de ofertas.html del sitio base.
-// "claseColumna" permite cambiar el ancho de la tarjeta según dónde se use
-// (por defecto 4 por fila en pantallas grandes).
 function ProductoCard({ producto, onAgregar, claseColumna = 'col-md-6 col-lg-3' }) {
   const [sinStock, setSinStock] = useState(false);
 
@@ -17,7 +9,6 @@ function ProductoCard({ producto, onAgregar, claseColumna = 'col-md-6 col-lg-3' 
   const precioFinal = obtenerPrecioFinal(producto);
 
   function manejarClic() {
-    // Le pasamos al carrito el producto con el precio que realmente se cobra
     const seAgrego = onAgregar({
       codigo: producto.codigo,
       nombre: producto.nombre,

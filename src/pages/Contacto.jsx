@@ -1,8 +1,5 @@
 import { useState } from 'react';
 
-// Misma estructura que contacto.html del sitio base: una tarjeta centrada
-// con título "Contacto" y un formulario de nombre, email y mensaje.
-// No hay servidor, así que al enviar solo se muestra una confirmación.
 function Contacto() {
   const [form, setForm] = useState({ nombre: '', email: '', mensaje: '' });
   const [enviado, setEnviado] = useState(false);

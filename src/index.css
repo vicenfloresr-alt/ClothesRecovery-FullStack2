@@ -1,9 +1,3 @@
-/* Bootstrap se encarga del layout (columnas, grid, responsive).
-   Este archivo solo pone la identidad visual "opium gótico":
-   colores, tipografías y detalles decorativos.
-   Es el mismo estilos.css de la Evaluación 1, con algunas clases
-   nuevas agregadas al final para las vistas de Parcial 2. */
-
 body {
   font-family: 'Inter', sans-serif;
   color: #e8e2d8;
@@ -332,10 +326,6 @@ a {
   }
 }
 
-/* =========================================================
-   Clases nuevas de Parcial 2: Categorías, Carrito, Checkout
-   ========================================================= */
-
 .tarjeta-categoria {
   background-color: #16161a;
   border: 1px solid #2a2a2e;
@@ -398,10 +388,6 @@ a {
   border-color: #b3082f;
 }
 
-/* =========================================================
-   Breadcrumb (usado en el detalle de blog)
-   ========================================================= */
-
 .breadcrumb {
   background-color: transparent;
   padding: 0;
@@ -419,12 +405,6 @@ a {
 .breadcrumb-item + .breadcrumb-item::before {
   color: #8a8a8f;
 }
-
-/* =========================================================
-   Tablas, modal, precios y campos deshabilitados (tema oscuro)
-   Bootstrap trae estos componentes con colores claros; acá los
-   adaptamos a la paleta de ClothesRecovery.
-   ========================================================= */
 
 .table {
   --bs-table-color: #e8e2d8;

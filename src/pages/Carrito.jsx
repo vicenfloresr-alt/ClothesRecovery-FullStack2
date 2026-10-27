@@ -4,11 +4,6 @@ import { obtenerProductos, formatearPrecio } from '../data/productos';
 import ProductoCard from '../components/ProductoCard';
 import { useCarrito } from '../context/CarritoContext';
 
-// Misma estructura que carrito.html del sitio base: a la izquierda la
-// lista de productos con botón de añadir, a la derecha la tabla del
-// carrito (imagen, nombre, precio, cantidad con - y +, subtotal, eliminar),
-// el total y los botones "Limpiar" y "Comprar ahora". Eliminar pide
-// confirmación con un modal, igual que la plantilla.
 function Carrito() {
   const {
     items,
@@ -20,7 +15,6 @@ function Carrito() {
     totalPrecio,
   } = useCarrito();
 
-  // Código del producto que se está por eliminar (null = modal cerrado)
   const [codigoAEliminar, setCodigoAEliminar] = useState(null);
 
   const productos = obtenerProductos();
@@ -35,7 +29,6 @@ function Carrito() {
       <section className="py-5">
         <div className="container">
           <div className="row g-4">
-            {/* Lista de productos */}
             <div className="col-lg-6">
               <h2 className="mb-4">Lista de productos</h2>
               <div className="row g-3">
@@ -50,7 +43,6 @@ function Carrito() {
               </div>
             </div>
 
-            {/* Carrito de compras */}
             <div className="col-lg-6">
               <h2 className="mb-4">Carrito de Compras</h2>
 
@@ -139,7 +131,6 @@ function Carrito() {
         </div>
       </section>
 
-      {/* Modal de confirmación para eliminar un producto */}
       {codigoAEliminar !== null && (
         <>
           <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-modal="true">

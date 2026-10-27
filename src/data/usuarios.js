@@ -1,8 +1,3 @@
-// "Base de datos" simulada de usuarios, igual que productos.js y categorias.js.
-// Se usa en Login (validar credenciales) y en Registro (crear cuenta nueva).
-// Trae un par de cuentas de ejemplo para poder probar el login sin
-// necesidad de registrarse primero.
-
 let usuarios = [
   {
     run: '11111111-1',
@@ -21,14 +16,10 @@ let usuarios = [
   },
 ];
 
-// ---------- CRUD ----------
-
-// Leer todos
 export function obtenerUsuarios() {
   return usuarios;
 }
 
-// Leer uno por correo
 export function obtenerUsuarioPorCorreo(correo) {
   for (let i = 0; i < usuarios.length; i++) {
     if (usuarios[i].correo === correo) {
@@ -38,12 +29,10 @@ export function obtenerUsuarioPorCorreo(correo) {
   return null;
 }
 
-// Validar si ya existe una cuenta con ese correo (para el registro)
 export function existeCorreo(correo) {
   return obtenerUsuarioPorCorreo(correo) !== null;
 }
 
-// Validar credenciales de login: devuelve el usuario si calzan, o null
 export function validarCredenciales(correo, password) {
   const usuario = obtenerUsuarioPorCorreo(correo);
   if (usuario !== null && usuario.password === password) {
@@ -52,12 +41,10 @@ export function validarCredenciales(correo, password) {
   return null;
 }
 
-// Crear
 export function agregarUsuario(nuevoUsuario) {
   usuarios.push(nuevoUsuario);
 }
 
-// Actualizar
 export function editarUsuario(correo, datosNuevos) {
   for (let i = 0; i < usuarios.length; i++) {
     if (usuarios[i].correo === correo) {
@@ -70,7 +57,6 @@ export function editarUsuario(correo, datosNuevos) {
   return false;
 }
 
-// Eliminar
 export function eliminarUsuario(correo) {
   const restantes = [];
   for (let i = 0; i < usuarios.length; i++) {

@@ -4,7 +4,6 @@ import Navbar from './Navbar';
 import { CarritoProvider } from '../context/CarritoContext';
 import { SesionProvider } from '../context/SesionContext';
 
-// Muestra en qué ruta estamos, para comprobar a dónde navegó el Navbar
 function Ruta() {
   const ubicacion = useLocation();
   return <span data-testid="ruta">{ubicacion.pathname + ubicacion.search}</span>;

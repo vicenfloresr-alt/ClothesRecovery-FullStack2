@@ -1,5 +1,3 @@
-// Página temporal: marca qué vistas faltan por construir en los
-// próximos días del plan (miércoles-jueves). Se reemplaza una por una.
 function Placeholder({ titulo }) {
   return (
     <main>

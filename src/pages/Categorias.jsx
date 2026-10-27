@@ -4,9 +4,6 @@ import { obtenerProductosPorCategoria } from '../data/productos';
 import ProductoCard from '../components/ProductoCard';
 import { useCarrito } from '../context/CarritoContext';
 
-// Misma estructura que categorias.html del sitio base: una fila con las
-// categorías (imagen + nombre, la seleccionada resaltada) y debajo el
-// título de la categoría con su grilla de productos.
 function Categorias() {
   const { nombre } = useParams();
   const { agregarAlCarrito } = useCarrito();
@@ -28,7 +25,6 @@ function Categorias() {
 
   return (
     <main>
-      {/* Fila de categorías */}
       <div className="container mt-5">
         <ul className="nav justify-content-center">
           {categorias.map((cat) => (
@@ -45,7 +41,6 @@ function Categorias() {
         </ul>
       </div>
 
-      {/* Productos de la categoría */}
       <section className="py-5">
         <div className="container">
           <h2 className="mb-4">{categoria.nombre}</h2>

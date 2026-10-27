@@ -35,7 +35,6 @@ describe('ProductoCard', () => {
   });
 
   it('al hacer clic llama una vez a onAgregar con el precio que se cobra', () => {
-    // Mock: función espía que registra con qué datos la llamaron
     const onAgregar = jasmine.createSpy('onAgregar').and.returnValue(true);
     const producto = montar('POL-002', onAgregar);
     fireEvent.click(screen.getByText('Añadir al carrito'));

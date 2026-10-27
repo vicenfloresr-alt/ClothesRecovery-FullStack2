@@ -5,11 +5,6 @@ import { useSesion } from '../context/SesionContext';
 import { obtenerCategorias } from '../data/categorias';
 import { formatearPrecio } from '../data/productos';
 
-// Este Navbar sigue la misma estructura que el index.html de la plantilla
-// base (Anexo 3): navbar superior con logo + buscador + login/crear cuenta,
-// navbar inferior con el menú de navegación, y un offcanvas para el menú
-// en pantallas chicas. Lo único que cambia es la marca y los colores.
-
 function Navbar() {
   const { totalUnidades, totalPrecio } = useCarrito();
   const { usuario, cerrarSesion } = useSesion();
@@ -17,7 +12,6 @@ function Navbar() {
   const navigate = useNavigate();
   const [busqueda, setBusqueda] = useState('');
 
-  // El buscador lleva a la lista de productos con el texto en la URL
   function manejarBusqueda(evento) {
     evento.preventDefault();
     const texto = busqueda.trim();
@@ -35,7 +29,6 @@ function Navbar() {
 
   return (
     <header className="site-header">
-      {/* Navbar superior */}
       <nav className="navbar navbar-expand-lg">
         <div className="container-fluid">
           <Link className="logo" to="/">Clothes<span>Recovery</span></Link>
@@ -81,7 +74,6 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Navbar inferior (menú principal, solo escritorio) */}
       <nav className="navbar navbar-expand-lg d-none d-lg-block">
         <div className="container-fluid">
           <div className="collapse navbar-collapse justify-content-center">
@@ -117,7 +109,6 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Offcanvas: menú para pantallas chicas */}
       <div className="offcanvas offcanvas-start text-bg-dark" tabIndex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
         <div className="offcanvas-header">
           <h5 className="offcanvas-title" id="offcanvasMenuLabel">Menú</h5>

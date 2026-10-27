@@ -45,9 +45,7 @@ describe('productos.js', () => {
     });
 
     it('calcularPrecioOferta redondea a peso entero', () => {
-      // 10990 * 0.8 = 8792
       expect(calcularPrecioOferta(10990)).toBe(8792);
-      // 17990 * 0.8 = 14392
       expect(calcularPrecioOferta(17990)).toBe(14392);
     });
 
@@ -154,7 +152,6 @@ describe('productos.js', () => {
       const antes = obtenerProductoPorCodigo('POL-001').stock;
       descontarStock('POL-001', 2);
       expect(obtenerProductoPorCodigo('POL-001').stock).toBe(antes - 2);
-      // dejamos el stock como estaba para no afectar otras pruebas
       editarProducto('POL-001', { stock: antes });
     });
 

@@ -3,11 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { agregarUsuario, existeCorreo } from '../data/usuarios';
 import DireccionFields from '../components/DireccionFields';
 
-// Misma estructura que crear-sesion.html del sitio base: una tarjeta con
-// datos personales arriba y dirección de entrega abajo (calle,
-// departamento, región/comuna en cascada, indicaciones). La plantilla
-// usaba Toastify para los mensajes; acá se muestra un mensaje simple
-// con nuestras propias clases (.mensaje-error / texto de éxito).
 function Registro() {
   const [form, setForm] = useState({
     run: '',
@@ -26,8 +21,6 @@ function Registro() {
   const [exito, setExito] = useState(false);
   const navigate = useNavigate();
 
-  // Cambia un solo campo del formulario (usa la versión anterior del
-  // estado para que dos cambios seguidos no se pisen entre sí)
   function cambiarCampo(nombre, valor) {
     setForm((anterior) => ({ ...anterior, [nombre]: valor }));
   }

@@ -1,9 +1,3 @@
-// Regiones y comunas de Chile, usadas en el formulario de Registro
-// (dirección de entrega). Mismo dataset que trae el sitio base en
-// data/zonas.js, solo convertido a exports de ES modules.
-
-
-
 export const regiones = [
     { id: 1000, nombre: "Región Metropolitana de Santiago" },
     { id: 2000, nombre: "Tarapacá" },
@@ -372,7 +366,6 @@ export const comunas = [
     { id: 16021, nombre: "San Nicolás", id_region: 16000 }
 ];
 
-// Busca el nombre de una región por su id (para mostrarlo en pantalla)
 export function obtenerNombreRegion(id) {
   for (let i = 0; i < regiones.length; i++) {
     if (regiones[i].id === Number(id)) {
@@ -382,7 +375,6 @@ export function obtenerNombreRegion(id) {
   return '';
 }
 
-// Busca el nombre de una comuna por su id
 export function obtenerNombreComuna(id) {
   for (let i = 0; i < comunas.length; i++) {
     if (comunas[i].id === Number(id)) {

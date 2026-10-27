@@ -85,7 +85,6 @@ describe('Comprar (checkout)', () => {
     let numerosAntes = [];
     let stockOriginal = {};
 
-    // Guarda el estado inicial para dejar todo como estaba al terminar
     beforeEach(() => {
       numerosAntes = obtenerPedidos().map((p) => p.numero);
       stockOriginal = {

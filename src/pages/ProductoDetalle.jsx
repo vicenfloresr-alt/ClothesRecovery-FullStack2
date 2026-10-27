@@ -8,10 +8,6 @@ import {
 } from '../data/productos';
 import { useCarrito } from '../context/CarritoContext';
 
-// Misma estructura que productos/producto1.html del sitio base: breadcrumb,
-// tarjeta con la imagen a la izquierda y a la derecha nombre, precio (con
-// el precio anterior tachado si está en oferta), descripción, lista de
-// características y botón "Agregar al Carrito".
 function ProductoDetalle() {
   const { codigo } = useParams();
   const { agregarAlCarrito } = useCarrito();

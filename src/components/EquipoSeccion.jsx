@@ -1,6 +1,3 @@
-// El sitio base repite este mismo bloque de "equipo" al final tanto de
-// nosotros.html como de blog-items.html, así que lo dejamos como un
-// componente aparte para no repetir el JSX dos veces.
 const equipo = [
   {
     nombre: 'Benjamín Obreque',

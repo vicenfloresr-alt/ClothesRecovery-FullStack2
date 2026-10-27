@@ -1,11 +1,8 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { CarritoProvider, useCarrito } from './CarritoContext';
 
-// Componente de prueba: muestra los datos del carrito y tiene botones
-// que llaman a las funciones del Context.
 function Panel() {
   const { items, agregarAlCarrito, cambiarCantidad, eliminarDelCarrito, vaciarCarrito, totalUnidades, totalPrecio } = useCarrito();
-  // CHA-001 tiene stock 2; POL-001 tiene stock 8
   const chaqueta = { codigo: 'CHA-001', nombre: 'Chaqueta', precio: 1000, imagen: '/a.jpg' };
   const polera = { codigo: 'POL-001', nombre: 'Polera', precio: 500, imagen: '/b.jpg' };
   const inexistente = { codigo: 'XXX-999', nombre: 'Nada', precio: 1, imagen: '/c.jpg' };

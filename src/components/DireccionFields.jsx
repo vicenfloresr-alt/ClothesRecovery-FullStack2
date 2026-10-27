@@ -1,14 +1,6 @@
 import { regiones, comunas } from '../data/zonas';
 
-// Campos de dirección de entrega (calle, departamento, región, comuna e
-// indicaciones). El sitio base repite este mismo bloque en crear-sesion.html
-// y en comprar.html, así que lo dejamos como un componente que usan
-// Registro y Comprar.
-//   valores: objeto con calle, departamento, region, comuna, indicaciones
-//   onCambiar(nombreCampo, valor): avisa al padre que un campo cambió
 function DireccionFields({ valores, onCambiar }) {
-  // Comunas de la región seleccionada (con un for simple, igual que el
-  // resto del proyecto, en vez de .filter()).
   const comunasDisponibles = [];
   for (let i = 0; i < comunas.length; i++) {
     if (comunas[i].id_region === Number(valores.region)) {
@@ -22,7 +14,6 @@ function DireccionFields({ valores, onCambiar }) {
 
   function manejarCambioRegion(evento) {
     onCambiar('region', evento.target.value);
-    // La comuna elegida antes puede no pertenecer a la región nueva
     onCambiar('comuna', '');
   }
 

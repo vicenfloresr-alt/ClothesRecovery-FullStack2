@@ -3,11 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { validarCredenciales } from '../data/usuarios';
 import { useSesion } from '../context/SesionContext';
 
-// Misma estructura que iniciar-sesion.html del sitio base: una tarjeta
-// con imagen a la izquierda y formulario a la derecha, alerta de error,
-// link a registro y a "olvidé mi contraseña". La plantilla validaba
-// contra credenciales fijas en el script; acá se valida contra nuestra
-// "base de datos" simulada de usuarios.data/usuarios.js.
 function Login() {
   const [correo, setCorreo] = useState('');
   const [password, setPassword] = useState('');

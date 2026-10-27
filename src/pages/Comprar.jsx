@@ -6,9 +6,6 @@ import DireccionFields from '../components/DireccionFields';
 import { useCarrito } from '../context/CarritoContext';
 import { useSesion } from '../context/SesionContext';
 
-// Arma los valores iniciales del formulario: vacíos, o con los datos del
-// usuario que inició sesión. Región y comuna van como texto porque vienen
-// de un <select>.
 function formularioInicial(usuario) {
   if (usuario === null) {
     return {
@@ -29,18 +26,11 @@ function formularioInicial(usuario) {
   };
 }
 
-// Misma estructura que comprar.html del sitio base: resumen de la compra
-// con el total a pagar, tabla de productos, formulario con los datos del
-// cliente y la dirección de entrega, y el botón "Pagar ahora".
-// Al pagar se simula la pasarela de pago: si el pago se acepta va a la
-// vista "Compra exitosa", si no, a "Compra con error".
 function Comprar() {
   const { items, totalPrecio, vaciarCarrito, stockDe } = useCarrito();
   const navigate = useNavigate();
   const { usuario } = useSesion();
 
-  // Si hay una sesión iniciada, los datos del cliente y la dirección se
-  // completan solos (el cliente igual los puede cambiar antes de pagar).
   const [form, setForm] = useState(() => formularioInicial(usuario));
 
   function cambiarCampo(nombre, valor) {
@@ -51,7 +41,6 @@ function Comprar() {
     cambiarCampo(evento.target.name, evento.target.value);
   }
 
-  // ¿Alguno de los productos del carrito supera el stock disponible?
   function hayProblemaDeStock() {
     for (let i = 0; i < items.length; i++) {
       if (items[i].cantidad > stockDe(items[i].codigo)) {
@@ -85,14 +74,12 @@ function Comprar() {
     });
 
     if (pagoAceptado) {
-      // Compra exitosa: se descuenta el stock y se vacía el carrito
       for (let i = 0; i < items.length; i++) {
         descontarStock(items[i].codigo, items[i].cantidad);
       }
       vaciarCarrito();
       navigate(`/comprar/ok/${pedido.numero}`);
     } else {
-      // Pago rechazado: el carrito se mantiene para poder reintentar
       navigate(`/comprar/error/${pedido.numero}`);
     }
   }

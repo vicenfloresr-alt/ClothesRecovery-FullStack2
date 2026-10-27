@@ -2,13 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
-// Bootstrap vive en node_modules (como React), no por CDN.
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-// Nuestra hoja de estilos "opium gótico" va después de Bootstrap,
-// así sus reglas pisan los colores por defecto de Bootstrap.
 import './index.css';
 
 import App from './App';

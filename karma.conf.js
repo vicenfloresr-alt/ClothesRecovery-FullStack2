@@ -1,14 +1,6 @@
-// Configuración de Karma + Jasmine para ClothesRecovery.
-// Karma abre un navegador (Chrome sin ventana), carga los archivos
-// *.spec.js / *.spec.jsx de src/ y corre las pruebas escritas con Jasmine.
-// karma-webpack + babel-loader convierten el JSX a JavaScript normal,
-// igual que hace react-scripts cuando uno corre "npm start".
-
 process.env.NODE_ENV = 'test';
 process.env.BABEL_ENV = 'test';
 
-// Si existe el Chromium de Playwright (entorno de desarrollo en la nube) se usa ese.
-// En otro computador, Karma busca Google Chrome instalado (o usa CHROME_BIN si está definido).
 const fs = require('fs');
 const chromiumLocal = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 if (!process.env.CHROME_BIN && fs.existsSync(chromiumLocal)) {
@@ -49,8 +41,6 @@ module.exports = function (config) {
               loader: 'babel-loader',
               options: {
                 presets: [[require.resolve('babel-preset-react-app'), { runtime: 'automatic' }]],
-                // Instrumenta los archivos de src/ para medir cobertura
-                // (los archivos .spec no cuentan).
                 plugins: [
                   [require.resolve('babel-plugin-istanbul'), { exclude: ['**/*.spec.js', '**/*.spec.jsx'] }],
                 ],

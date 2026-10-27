@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import DireccionFields from './DireccionFields';
 
-// Componente padre de prueba: guarda los valores igual que lo hacen
-// Registro y Comprar, y le pasa a DireccionFields las props.
 function Padre({ alCambiar }) {
   const [valores, setValores] = useState({
     calle: '', departamento: '', region: '', comuna: '', indicaciones: '',
@@ -31,7 +29,6 @@ describe('DireccionFields', () => {
     render(<Padre alCambiar={() => {}} />);
     fireEvent.change(screen.getByLabelText(/Región/), { target: { value: '1000' } });
     expect(screen.getByLabelText(/Comuna/).disabled).toBeFalse();
-    // 1 opción "Selecciona una comuna" + las comunas de la región 1000
     expect(opcionesDeComuna().length).toBeGreaterThan(1);
     expect(screen.getByText('Cerrillos')).toBeTruthy();
     expect(screen.queryByText('Arica')).toBeNull();

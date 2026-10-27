@@ -1,11 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
-// Guarda quién tiene la sesión iniciada. Funciona igual que CarritoContext:
-// el estado vive acá, cualquier componente lo lee con useSesion() y se
-// guarda en localStorage para que no se pierda al recargar la página.
-// Nunca se guarda la contraseña, solo los datos que usa la tienda
-// (nombre, apellidos, correo y dirección) para completar el checkout.
-
 const SesionContext = createContext(null);
 const CLAVE_STORAGE = 'sesion-clothesrecovery';
 
@@ -16,13 +10,11 @@ function leerSesionGuardada() {
       return JSON.parse(texto);
     }
   } catch (error) {
-    // si localStorage no está disponible, partimos sin sesión
   }
   return null;
 }
 
 export function SesionProvider({ children }) {
-  // usuario: { nombre, apellidos, correo, direccion } o null si no hay sesión
   const [usuario, setUsuario] = useState(leerSesionGuardada);
 
   useEffect(() => {
@@ -33,11 +25,9 @@ export function SesionProvider({ children }) {
         localStorage.setItem(CLAVE_STORAGE, JSON.stringify(usuario));
       }
     } catch (error) {
-      // si no se puede guardar, la sesión igual funciona en memoria
     }
   }, [usuario]);
 
-  // Recibe el usuario completo de usuarios.js y guarda solo lo necesario
   function iniciarSesion(datosUsuario) {
     setUsuario({
       nombre: datosUsuario.nombre,

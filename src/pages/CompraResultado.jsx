@@ -4,12 +4,6 @@ import { formatearPrecio } from '../data/productos';
 import { obtenerPedidoPorNumero, LIMITE_PAGO } from '../data/pedidos';
 import { obtenerNombreRegion, obtenerNombreComuna } from '../data/zonas';
 
-// Misma estructura que comprar-ok.html y comprar-error.html del sitio base
-// (las dos son casi idénticas, por eso comparten este componente):
-// código de orden, mensaje con ícono, datos del cliente y de la entrega
-// (solo lectura), tabla de productos y los botones finales.
-//   exito = true  -> "Compra exitosa" (boleta en PDF / por email)
-//   exito = false -> "Compra con error" (volver a realizar el pago)
 function CompraResultado({ exito }) {
   const { numero } = useParams();
   const pedido = obtenerPedidoPorNumero(numero);
@@ -26,7 +20,6 @@ function CompraResultado({ exito }) {
     );
   }
 
-  // Motivo del rechazo (solo se usa en la vista de error)
   let motivo = 'Uno de los productos ya no tiene stock suficiente.';
   if (pedido.total > LIMITE_PAGO) {
     motivo = `El monto supera el límite de ${formatearPrecio(LIMITE_PAGO)} para pagos en línea.`;

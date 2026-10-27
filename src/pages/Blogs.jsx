@@ -1,9 +1,6 @@
 import { Link } from 'react-router-dom';
 import { obtenerBlogs } from '../data/blogs';
 
-// Misma estructura que blog.html del sitio base: una grilla de tarjetas
-// (card + card-img-top + botón "Explorar"), una por cada post, en vez de
-// las categorías de videojuegos de la plantilla.
 function Blogs() {
   const blogs = obtenerBlogs();
 

@@ -1,11 +1,3 @@
-// Este archivo actúa como "base de datos" simulada de productos.
-// Es el mismo arreglo que usábamos en productos.html en Parcial 1,
-// ahora vive en un solo lugar y los componentes lo importan.
-// Trae funciones CRUD (Crear, Leer, Actualizar, Eliminar) encima del arreglo,
-// tal como pide el enunciado de Parcial 2.
-// "stock" es la cantidad disponible (igual que en el sitio base): el
-// carrito no deja agregar más unidades que el stock, y al pagar se descuenta.
-
 let productos = [
   { codigo: 'POL-001', nombre: 'Polera Oversize Negra', descripcion: 'Algodón pesado, corte oversize.', precio: 8990, categoria: 'Poleras', imagen: '/img/productos/polera1.jpg', stock: 8 },
   { codigo: 'POL-002', nombre: 'Polera Gráfica Blackletter', descripcion: 'Estampado con tipografía gótica.', precio: 10990, categoria: 'Poleras', imagen: '/img/productos/poleras2.jpg', stock: 5 },
@@ -23,29 +15,22 @@ let productos = [
   { codigo: 'CAL-002', nombre: 'Zapatillas Plataforma', descripcion: 'Plataforma 4cm, cordones anchos.', precio: 29990, categoria: 'Calzado', imagen: '/img/productos/calzado2.webp', stock: 6 },
 ];
 
-// Códigos que se muestran en la vista de Ofertas (simple: una lista fija por ahora)
 export const CODIGOS_EN_OFERTA = ['POL-002', 'PAN-002', 'CHA-001', 'CAL-002'];
 
-// Descuento que se aplica a los productos en oferta (en porcentaje)
 export const PORCENTAJE_DESCUENTO = 20;
 
 export function formatearPrecio(numero) {
   return '$' + numero.toLocaleString('es-CL');
 }
 
-// ---------- Ofertas ----------
-
-// ¿Este código está en la lista de ofertas?
 export function estaEnOferta(codigo) {
   return CODIGOS_EN_OFERTA.indexOf(codigo) !== -1;
 }
 
-// Precio con el descuento aplicado (redondeado a peso entero)
 export function calcularPrecioOferta(precio) {
   return Math.round(precio * (100 - PORCENTAJE_DESCUENTO) / 100);
 }
 
-// Precio que realmente se cobra: el de oferta si corresponde, si no el normal
 export function obtenerPrecioFinal(producto) {
   if (estaEnOferta(producto.codigo)) {
     return calcularPrecioOferta(producto.precio);
@@ -53,14 +38,10 @@ export function obtenerPrecioFinal(producto) {
   return producto.precio;
 }
 
-// ---------- CRUD ----------
-
-// Leer todos
 export function obtenerProductos() {
   return productos;
 }
 
-// Leer uno por código
 export function obtenerProductoPorCodigo(codigo) {
   for (let i = 0; i < productos.length; i++) {
     if (productos[i].codigo === codigo) {
@@ -70,7 +51,6 @@ export function obtenerProductoPorCodigo(codigo) {
   return null;
 }
 
-// Leer por categoría
 export function obtenerProductosPorCategoria(categoria) {
   const resultado = [];
   for (let i = 0; i < productos.length; i++) {
@@ -81,7 +61,6 @@ export function obtenerProductosPorCategoria(categoria) {
   return resultado;
 }
 
-// Leer los que están en oferta
 export function obtenerProductosEnOferta() {
   const resultado = [];
   for (let i = 0; i < productos.length; i++) {
@@ -92,9 +71,6 @@ export function obtenerProductosEnOferta() {
   return resultado;
 }
 
-// Buscar y filtrar: devuelve los productos cuyo nombre, descripción o código
-// contienen el texto (sin importar mayúsculas) y que son de la categoría
-// indicada. Un texto o una categoría vacíos no filtran nada.
 export function buscarProductos(texto, categoria) {
   const buscado = (texto || '').trim().toLowerCase();
   const resultado = [];
@@ -110,12 +86,10 @@ export function buscarProductos(texto, categoria) {
   return resultado;
 }
 
-// Crear
 export function agregarProducto(nuevoProducto) {
   productos.push(nuevoProducto);
 }
 
-// Actualizar
 export function editarProducto(codigo, datosNuevos) {
   for (let i = 0; i < productos.length; i++) {
     if (productos[i].codigo === codigo) {
@@ -128,7 +102,6 @@ export function editarProducto(codigo, datosNuevos) {
   return false;
 }
 
-// Eliminar
 export function eliminarProducto(codigo) {
   const restantes = [];
   for (let i = 0; i < productos.length; i++) {
@@ -139,7 +112,6 @@ export function eliminarProducto(codigo) {
   productos = restantes;
 }
 
-// Descontar stock después de una compra exitosa
 export function descontarStock(codigo, cantidad) {
   const producto = obtenerProductoPorCodigo(codigo);
   if (producto !== null) {

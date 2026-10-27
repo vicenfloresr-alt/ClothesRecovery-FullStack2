@@ -1,9 +1,3 @@
-// "Base de datos" simulada de blogs, misma idea que productos.js.
-// Los dos primeros posts son el contenido real que ya se había escrito
-// en la Evaluación 1 (blogs_detalle1.html y blogs_detalle2.html); el
-// tercero es nuevo, para completar las 3 tarjetas que trae el blog.html
-// del sitio base.
-
 let blogs = [
   {
     slug: 'moda-gotica-datos-curiosos',

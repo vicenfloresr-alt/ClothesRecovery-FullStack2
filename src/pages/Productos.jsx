@@ -4,10 +4,6 @@ import { obtenerCategorias } from '../data/categorias';
 import ProductoCard from '../components/ProductoCard';
 import { useCarrito } from '../context/CarritoContext';
 
-// Lista de productos con filtros. El texto buscado y la categoría viven en
-// la URL (/productos?q=polera&categoria=Poleras), así el buscador del
-// Navbar y los filtros de esta página usan la misma información y el
-// resultado se puede compartir o recargar sin perder el filtro.
 function Productos() {
   const { agregarAlCarrito } = useCarrito();
   const [parametros, setParametros] = useSearchParams();
@@ -17,7 +13,6 @@ function Productos() {
   const categoria = parametros.get('categoria') || '';
   const productos = buscarProductos(texto, categoria);
 
-  // Cambia un filtro en la URL (si queda vacío, se quita de la URL)
   function cambiarFiltro(nombre, valor) {
     const nuevos = new URLSearchParams(parametros);
     if (valor === '') {
