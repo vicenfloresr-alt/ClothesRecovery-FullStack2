@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { CarritoProvider } from './context/CarritoContext';
+import { SesionProvider } from './context/SesionContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -19,6 +20,7 @@ import CompraResultado from './pages/CompraResultado';
 
 function App() {
   return (
+    <SesionProvider>
     <CarritoProvider>
       <Navbar />
 
@@ -42,6 +44,7 @@ function App() {
 
       <Footer />
     </CarritoProvider>
+    </SesionProvider>
   );
 }
 

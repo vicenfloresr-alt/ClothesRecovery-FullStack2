@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { validarCredenciales } from '../data/usuarios';
+import { useSesion } from '../context/SesionContext';
 
 // Misma estructura que iniciar-sesion.html del sitio base: una tarjeta
 // con imagen a la izquierda y formulario a la derecha, alerta de error,
@@ -12,12 +13,14 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
   const navigate = useNavigate();
+  const { iniciarSesion } = useSesion();
 
   function manejarSubmit(evento) {
     evento.preventDefault();
     const usuario = validarCredenciales(correo, password);
     if (usuario !== null) {
       setError(false);
+      iniciarSesion(usuario);
       navigate('/');
     } else {
       setError(true);

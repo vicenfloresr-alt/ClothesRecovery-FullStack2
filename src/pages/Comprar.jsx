@@ -4,6 +4,30 @@ import { formatearPrecio, descontarStock } from '../data/productos';
 import { agregarPedido, procesarPago } from '../data/pedidos';
 import DireccionFields from '../components/DireccionFields';
 import { useCarrito } from '../context/CarritoContext';
+import { useSesion } from '../context/SesionContext';
+
+// Arma los valores iniciales del formulario: vacíos, o con los datos del
+// usuario que inició sesión. Región y comuna van como texto porque vienen
+// de un <select>.
+function formularioInicial(usuario) {
+  if (usuario === null) {
+    return {
+      nombre: '', apellidos: '', correo: '',
+      calle: '', departamento: '', region: '', comuna: '', indicaciones: '',
+    };
+  }
+  const direccion = usuario.direccion || {};
+  return {
+    nombre: usuario.nombre,
+    apellidos: usuario.apellidos,
+    correo: usuario.correo,
+    calle: direccion.calle || '',
+    departamento: direccion.departamento || '',
+    region: direccion.region ? String(direccion.region) : '',
+    comuna: direccion.comuna ? String(direccion.comuna) : '',
+    indicaciones: direccion.indicaciones || '',
+  };
+}
 
 // Misma estructura que comprar.html del sitio base: resumen de la compra
 // con el total a pagar, tabla de productos, formulario con los datos del
@@ -13,17 +37,11 @@ import { useCarrito } from '../context/CarritoContext';
 function Comprar() {
   const { items, totalPrecio, vaciarCarrito, stockDe } = useCarrito();
   const navigate = useNavigate();
+  const { usuario } = useSesion();
 
-  const [form, setForm] = useState({
-    nombre: '',
-    apellidos: '',
-    correo: '',
-    calle: '',
-    departamento: '',
-    region: '',
-    comuna: '',
-    indicaciones: '',
-  });
+  // Si hay una sesión iniciada, los datos del cliente y la dirección se
+  // completan solos (el cliente igual los puede cambiar antes de pagar).
+  const [form, setForm] = useState(() => formularioInicial(usuario));
 
   function cambiarCampo(nombre, valor) {
     setForm((anterior) => ({ ...anterior, [nombre]: valor }));
@@ -134,7 +152,11 @@ function Comprar() {
 
               <form onSubmit={manejarPago}>
                 <h4 className="mb-1">Información del cliente</h4>
-                <p className="form-subtitulo">Completa la siguiente información</p>
+                <p className="form-subtitulo">
+                  {usuario === null
+                    ? 'Completa la siguiente información'
+                    : 'Completamos tus datos con tu sesión iniciada. Puedes cambiarlos antes de pagar.'}
+                </p>
                 <div className="row">
                   <div className="col-md-6 form-grupo mb-3">
                     <label htmlFor="nombre" className="form-label">Nombre <span className="opcional">obligatorio</span></label>
