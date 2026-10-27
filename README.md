@@ -1,36 +1,29 @@
-# ClothesRecovery - Tienda de Ropa Online
- 
-Proyecto fullstack de una tienda de ropa online. Está hecho con **Java + Spring Boot + HTML +CSS + Javascript** y usa una arquitectura de microservicios, lo que significa que cada parte del sistema corre como un programa separado.
- 
----
- 
-## ¿Qué hace este proyecto?
- 
-Permite gestionar una tienda de ropa con 5 funcionalidades principales:
- 
-- 👤 **Clientes** — registrar y administrar clientes
-- 👕 **Catálogo** — gestionar los productos (nombre, talla, precio, stock)
-- 📦 **Pedidos** — registrar pedidos de los clientes
-- 🚚 **Envíos** — gestionar el despacho de los pedidos
-- 💳 **Pagos** — registrar los pagos realizados
-Todas las funcionalidades se comunican a través de un **API Gateway**, que es como la puerta de entrada del sistema.
- 
----
+# ClothesRecovery — Frontend (React)
 
+Tienda online de ropa streetwear de segunda vida. Evaluación Parcial 2 de DSY1104 (Desarrollo Fullstack II).
+Hecho con React (Create React App), React Router y Bootstrap. No tiene backend: los datos son archivos JavaScript
+con funciones CRUD (`src/data/`) y el carrito y los pedidos se guardan en `localStorage`.
 
- ## Frontend
-- Debido que actualmente el frontend aun no tiene un backend conectado (pero en el futuro se hara)
-- igual hace falta que el carrito se haga porque no supe como hacerlo como mostraba las instrucciones del enunciado
-- faltan las vistas de admin
-- pero todo esto se terminaran mediados de noviembre diciembre cuando el frontend y backend se conecten
-  
-  
-## Tecnologías usadas
- 
-- Java 21
-- Spring Boot 4.0.6
-- MySQL (base de datos)
-- Maven (para compilar y correr el proyecto)
-- HTML 5.0
-- CSS & BootStrap
-- JavaScript
+## Cómo ejecutarlo
+
+Requisitos: Node.js y npm.
+
+```
+npm install
+npm start          # abre http://localhost:3000
+npm run build      # genera la carpeta build
+npm run test:karma # pruebas unitarias con Jasmine + Karma (necesita Google Chrome)
+```
+
+Usuario de prueba: `pixu@clothesrecovery.cl` / `12345`.
+
+## Estructura
+
+- `src/pages/` — una vista por ruta (Home, Productos, Carrito, Comprar, etc.)
+- `src/components/` — piezas reutilizables (Navbar, Footer, ProductoCard, ...)
+- `src/context/CarritoContext.jsx` — carrito compartido con Context
+- `src/data/` — base de datos simulada y funciones CRUD
+- `*.spec.js` / `*.spec.jsx` — pruebas con Jasmine
+- `karma.conf.js` — configuración de Karma
+
+Nota: las pruebas están escritas con Jasmine y se corren con `npm run test:karma`. El comando `npm test` es el de Jest que trae Create React App y no es compatible con estas pruebas (usan funciones propias de Jasmine).

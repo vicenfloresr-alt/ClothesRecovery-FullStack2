@@ -1,0 +1,506 @@
+/* Bootstrap se encarga del layout (columnas, grid, responsive).
+   Este archivo solo pone la identidad visual "opium gótico":
+   colores, tipografías y detalles decorativos.
+   Es el mismo estilos.css de la Evaluación 1, con algunas clases
+   nuevas agregadas al final para las vistas de Parcial 2. */
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: #e8e2d8;
+  background-color: #0b0b0d;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.32px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+}
+
+.site-header {
+  background-color: #16161a;
+  border-bottom: 1px solid #b3082f;
+}
+
+.logo {
+  font-family: 'UnifrakturMaguntia', cursive;
+  font-size: 29px;
+  color: #e8e2d8;
+}
+
+.logo span {
+  color: #b3082f;
+}
+
+.main-nav a,
+.main-nav .nav-link,
+.main-nav .dropdown-toggle {
+  font-weight: 500;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+  color: #e8e2d8;
+}
+
+.main-nav a:hover,
+.main-nav .nav-link:hover,
+.main-nav a.active {
+  border-bottom-color: #b3082f;
+  color: #b3082f;
+}
+
+.cart-icon {
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+.cart-count {
+  background-color: #b3082f;
+  color: #e8e2d8;
+  padding: 1px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 2px;
+}
+
+.header-auth {
+  background-color: #0f0f11;
+  font-size: 14px;
+  color: #8a8a8f;
+}
+
+.header-auth a:hover {
+  color: #b3082f;
+}
+
+.header-auth a.active {
+  color: #b3082f;
+  font-weight: 500;
+}
+
+.hero-texto h1 {
+  font-size: 37px;
+  margin-bottom: 16px;
+  color: #e8e2d8;
+}
+
+.hero-texto p {
+  margin-bottom: 24px;
+  color: #8a8a8f;
+}
+
+.hero-imagen img {
+  border: 1px solid #2a2a2e;
+  filter: grayscale(15%) contrast(1.05);
+}
+
+.btn {
+  padding: 11px 26px;
+  font-weight: 500;
+  border: 1px solid #b3082f;
+  letter-spacing: 0.48px;
+}
+
+.btn-primario {
+  background-color: #b3082f;
+  color: #e8e2d8;
+}
+
+.btn-primario:hover {
+  background-color: #8c0625;
+  color: #e8e2d8;
+}
+
+.btn-secundario {
+  background-color: transparent;
+  color: #b3082f;
+}
+
+.btn-secundario:hover {
+  background-color: #b3082f;
+  color: #e8e2d8;
+}
+
+.tarjeta-producto-link {
+  display: block;
+  color: inherit;
+}
+
+.link-none {
+  text-decoration: none;
+  color: inherit;
+}
+
+.tarjeta-producto {
+  background-color: #16161a;
+  border: 1px solid #2a2a2e;
+  text-align: center;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.tarjeta-producto:hover {
+  border-color: #b3082f;
+  box-shadow: 0 4px 10px rgba(179, 8, 47, 0.25);
+}
+
+.tarjeta-producto .card-img-top {
+  filter: grayscale(10%);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.tarjeta-producto h3 {
+  font-size: 16px;
+  margin-bottom: 3px;
+  color: #c9a227;
+}
+
+.atributo {
+  color: #8a8a8f;
+  font-size: 14px;
+}
+
+.precio {
+  font-weight: 700;
+  color: #b3082f;
+}
+
+.site-footer {
+  background-color: #16161a;
+  color: #e8e2d8;
+  border-top: 1px solid #b3082f;
+}
+
+.footer-col a {
+  display: block;
+  color: #8a8a8f;
+  margin-bottom: 6px;
+}
+
+.footer-col a:hover {
+  color: #b3082f;
+}
+
+.form-contenedor {
+  background-color: #16161a;
+  border: 1px solid #2a2a2e;
+  padding: 40px;
+}
+
+.form-subtitulo {
+  color: #8a8a8f;
+  margin-bottom: 24px;
+}
+
+.form-grupo label {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.opcional {
+  color: #8a8a8f;
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.form-grupo input,
+.form-grupo select,
+.form-grupo textarea {
+  background-color: #0b0b0d;
+  border: 1px solid #2a2a2e;
+  color: #e8e2d8;
+}
+
+.form-grupo input:focus,
+.form-grupo select:focus,
+.form-grupo textarea:focus {
+  background-color: #0b0b0d;
+  color: #e8e2d8;
+  border-color: #b3082f;
+  box-shadow: none;
+}
+
+.pista {
+  color: #8a8a8f;
+  font-size: 12px;
+}
+
+.mensaje-error {
+  color: #b3082f;
+  font-size: 12px;
+  display: block;
+}
+
+.campo-invalido {
+  border-color: #b3082f;
+}
+
+.nosotros-intro p {
+  color: #8a8a8f;
+}
+
+.tarjeta-equipo {
+  background-color: #16161a;
+  border: 1px solid #2a2a2e;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.tarjeta-equipo h3 {
+  font-size: 18px;
+}
+
+.tarjeta-equipo .rol {
+  color: #8a8a8f;
+  font-size: 14px;
+}
+
+.blog-tarjeta,
+.tarjeta-blog-alt {
+  background-color: #16161a;
+  border: 1px solid #2a2a2e;
+}
+
+.blog-tarjeta img,
+.tarjeta-blog-alt img {
+  height: 300px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.blog-texto p,
+.blog-texto-alt p {
+  color: #8a8a8f;
+}
+
+.blog-detalle-imagen {
+  border: 1px solid #2a2a2e;
+  width: 100%;
+}
+
+.blog-detalle p {
+  color: #8a8a8f;
+}
+
+.blog-detalle strong {
+  color: #e8e2d8;
+}
+
+.volver-link {
+  color: #b3082f;
+}
+
+.volver-link:hover {
+  text-decoration: underline;
+}
+
+.carousel-imagen {
+  height: 420px;
+  object-fit: cover;
+  filter: grayscale(15%) contrast(1.05) brightness(0.75);
+}
+
+.carousel-caption {
+  background-color: rgba(11, 11, 13, 0.55);
+  padding: 16px 24px;
+  bottom: 40px;
+}
+
+.carousel-caption h5 {
+  font-family: 'Cinzel', serif;
+  color: #e8e2d8;
+}
+
+@media (max-width: 768px) {
+  .carousel-imagen {
+    height: 220px;
+  }
+}
+
+/* =========================================================
+   Clases nuevas de Parcial 2: Categorías, Carrito, Checkout
+   ========================================================= */
+
+.tarjeta-categoria {
+  background-color: #16161a;
+  border: 1px solid #2a2a2e;
+  text-align: center;
+  transition: border-color 0.2s ease;
+}
+
+.tarjeta-categoria:hover {
+  border-color: #b3082f;
+}
+
+.tarjeta-categoria .card-img-top {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  filter: grayscale(10%);
+}
+
+.badge-oferta {
+  background-color: #b3082f;
+  color: #e8e2d8;
+  font-size: 12px;
+  padding: 3px 8px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.precio-anterior {
+  text-decoration: line-through;
+  color: #8a8a8f;
+  font-size: 13px;
+  margin-right: 6px;
+}
+
+.fila-carrito img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  filter: grayscale(10%);
+}
+
+.resumen-carrito {
+  background-color: #16161a;
+  border: 1px solid #2a2a2e;
+  padding: 24px;
+}
+
+.mensaje-estado {
+  background-color: #16161a;
+  border: 1px solid #2a2a2e;
+  padding: 40px;
+  text-align: center;
+}
+
+.mensaje-estado.exito {
+  border-color: #3a7d44;
+}
+
+.mensaje-estado.error {
+  border-color: #b3082f;
+}
+
+/* =========================================================
+   Breadcrumb (usado en el detalle de blog)
+   ========================================================= */
+
+.breadcrumb {
+  background-color: transparent;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.breadcrumb-item a {
+  color: #b3082f;
+}
+
+.breadcrumb-item.active {
+  color: #8a8a8f;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  color: #8a8a8f;
+}
+
+/* =========================================================
+   Tablas, modal, precios y campos deshabilitados (tema oscuro)
+   Bootstrap trae estos componentes con colores claros; acá los
+   adaptamos a la paleta de ClothesRecovery.
+   ========================================================= */
+
+.table {
+  --bs-table-color: #e8e2d8;
+  --bs-table-bg: transparent;
+  --bs-table-striped-color: #e8e2d8;
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.04);
+  --bs-table-hover-color: #e8e2d8;
+  --bs-table-hover-bg: rgba(179, 8, 47, 0.12);
+  --bs-table-border-color: #2a2a2e;
+}
+
+.modal-content {
+  background-color: #16161a;
+  color: #e8e2d8;
+  border: 1px solid #2a2a2e;
+}
+
+.modal-header,
+.modal-footer {
+  border-color: #2a2a2e;
+}
+
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+.precio-descuento {
+  color: #8a8a8f;
+  font-size: 13px;
+}
+
+.nav-card {
+  background-color: #16161a;
+  border: 1px solid #2a2a2e;
+  text-align: center;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.nav-card:hover {
+  border-color: #b3082f;
+  transform: translateY(-3px);
+}
+
+.nav-card-activa {
+  border-color: #b3082f;
+}
+
+.nav-card img {
+  object-fit: cover;
+  filter: grayscale(10%);
+}
+
+.form-grupo input:disabled,
+.form-grupo select:disabled,
+.form-grupo textarea:disabled {
+  background-color: #101013;
+  color: #8a8a8f;
+  opacity: 1;
+}
+
+.mensaje-resultado.exito {
+  border-color: #3a7d44;
+}
+
+.mensaje-resultado.error {
+  border-color: #b3082f;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+}
+
+@media print {
+  .site-header,
+  .site-footer,
+  .btn {
+    display: none !important;
+  }
+}
