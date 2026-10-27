@@ -1,5 +1,7 @@
-import { NavLink, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
+import { useSesion } from '../context/SesionContext';
 import { obtenerCategorias } from '../data/categorias';
 import { formatearPrecio } from '../data/productos';
 
@@ -10,7 +12,26 @@ import { formatearPrecio } from '../data/productos';
 
 function Navbar() {
   const { totalUnidades, totalPrecio } = useCarrito();
+  const { usuario, cerrarSesion } = useSesion();
   const categorias = obtenerCategorias();
+  const navigate = useNavigate();
+  const [busqueda, setBusqueda] = useState('');
+
+  // El buscador lleva a la lista de productos con el texto en la URL
+  function manejarBusqueda(evento) {
+    evento.preventDefault();
+    const texto = busqueda.trim();
+    if (texto === '') {
+      navigate('/productos');
+    } else {
+      navigate('/productos?q=' + encodeURIComponent(texto));
+    }
+  }
+
+  function manejarCierreSesion() {
+    cerrarSesion();
+    navigate('/');
+  }
 
   return (
     <header className="site-header">
@@ -20,15 +41,33 @@ function Navbar() {
           <Link className="logo" to="/">Clothes<span>Recovery</span></Link>
 
           <div className="collapse navbar-collapse justify-content-center d-none d-lg-flex">
-            <form className="d-flex" role="search" onSubmit={(e) => e.preventDefault()}>
-              <input className="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" />
+            <form className="d-flex" role="search" onSubmit={manejarBusqueda}>
+              <input
+                className="form-control me-2"
+                type="search"
+                placeholder="Buscar"
+                aria-label="Buscar"
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+              />
               <button className="btn btn-secundario" type="submit">Buscar</button>
             </form>
           </div>
 
           <div className="d-flex align-items-center">
-            <NavLink to="/login" className="btn btn-secundario ms-2 d-none d-lg-inline-block">Iniciar sesión</NavLink>
-            <NavLink to="/registro" className="btn btn-primario ms-2 d-none d-lg-inline-block">Crear cuenta</NavLink>
+            {usuario === null ? (
+              <>
+                <NavLink to="/login" className="btn btn-secundario ms-2 d-none d-lg-inline-block">Iniciar sesión</NavLink>
+                <NavLink to="/registro" className="btn btn-primario ms-2 d-none d-lg-inline-block">Crear cuenta</NavLink>
+              </>
+            ) : (
+              <>
+                <span className="atributo ms-2 d-none d-lg-inline-block">Hola, {usuario.nombre}</span>
+                <button type="button" className="btn btn-secundario ms-2 d-none d-lg-inline-block" onClick={manejarCierreSesion}>
+                  Cerrar sesión
+                </button>
+              </>
+            )}
             <button
               className="btn btn-primario d-lg-none ms-2"
               type="button"
@@ -85,6 +124,17 @@ function Navbar() {
           <button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div className="offcanvas-body">
+          <form className="d-flex mb-4" role="search" onSubmit={manejarBusqueda}>
+            <input
+              className="form-control me-2"
+              type="search"
+              placeholder="Buscar"
+              aria-label="Buscar en el menú"
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+            />
+            <button className="btn btn-secundario" type="submit" data-bs-dismiss="offcanvas">Buscar</button>
+          </form>
           <ul className="list-unstyled main-nav">
             <li className="mb-3"><NavLink to="/" end className="nav-link" data-bs-dismiss="offcanvas">Home</NavLink></li>
             {categorias.map((categoria) => (
@@ -98,8 +148,18 @@ function Navbar() {
             <li className="mb-3"><NavLink to="/nosotros" className="nav-link" data-bs-dismiss="offcanvas">Nosotros</NavLink></li>
             <li className="mb-3"><NavLink to="/blogs" className="nav-link" data-bs-dismiss="offcanvas">Blogs</NavLink></li>
             <li className="mb-3"><NavLink to="/contacto" className="nav-link" data-bs-dismiss="offcanvas">Contacto</NavLink></li>
-            <li className="mb-3"><NavLink to="/login" className="nav-link" data-bs-dismiss="offcanvas">Iniciar sesión</NavLink></li>
-            <li className="mb-3"><NavLink to="/registro" className="nav-link" data-bs-dismiss="offcanvas">Crear cuenta</NavLink></li>
+            {usuario === null ? (
+              <>
+                <li className="mb-3"><NavLink to="/login" className="nav-link" data-bs-dismiss="offcanvas">Iniciar sesión</NavLink></li>
+                <li className="mb-3"><NavLink to="/registro" className="nav-link" data-bs-dismiss="offcanvas">Crear cuenta</NavLink></li>
+              </>
+            ) : (
+              <li className="mb-3">
+                <button type="button" className="btn btn-secundario w-100" data-bs-dismiss="offcanvas" onClick={manejarCierreSesion}>
+                  Cerrar sesión ({usuario.nombre})
+                </button>
+              </li>
+            )}
             <li>
               <Link to="/carrito" className="btn btn-primario w-100" data-bs-dismiss="offcanvas">
                 <i className="bi bi-cart4"></i> Carrito ({totalUnidades})

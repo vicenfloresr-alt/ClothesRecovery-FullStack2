@@ -92,6 +92,24 @@ export function obtenerProductosEnOferta() {
   return resultado;
 }
 
+// Buscar y filtrar: devuelve los productos cuyo nombre, descripción o código
+// contienen el texto (sin importar mayúsculas) y que son de la categoría
+// indicada. Un texto o una categoría vacíos no filtran nada.
+export function buscarProductos(texto, categoria) {
+  const buscado = (texto || '').trim().toLowerCase();
+  const resultado = [];
+  for (let i = 0; i < productos.length; i++) {
+    const producto = productos[i];
+    const coincideCategoria = !categoria || producto.categoria === categoria;
+    const todoElTexto = (producto.nombre + ' ' + producto.descripcion + ' ' + producto.codigo).toLowerCase();
+    const coincideTexto = buscado === '' || todoElTexto.indexOf(buscado) !== -1;
+    if (coincideCategoria && coincideTexto) {
+      resultado.push(producto);
+    }
+  }
+  return resultado;
+}
+
 // Crear
 export function agregarProducto(nuevoProducto) {
   productos.push(nuevoProducto);
