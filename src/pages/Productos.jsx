@@ -3,15 +3,17 @@ import { buscarProductos } from '../data/productos';
 import { obtenerCategorias } from '../data/categorias';
 import ProductoCard from '../components/ProductoCard';
 import { useCarrito } from '../context/CarritoContext';
+import { useProductos } from '../context/ProductosContext';
 
 function Productos() {
   const { agregarAlCarrito } = useCarrito();
   const [parametros, setParametros] = useSearchParams();
   const categorias = obtenerCategorias();
+  const { productos: todosLosProductos, cargando, error } = useProductos();
 
   const texto = parametros.get('q') || '';
   const categoria = parametros.get('categoria') || '';
-  const productos = buscarProductos(texto, categoria);
+  const productos = buscarProductos(todosLosProductos, texto, categoria);
 
   function cambiarFiltro(nombre, valor) {
     const nuevos = new URLSearchParams(parametros);
@@ -61,11 +63,15 @@ function Productos() {
           </div>
         </div>
 
+        {error && <p className="text-center mensaje-error">{error}</p>}
+
         <p className="atributo">
           {productos.length === 1 ? '1 producto encontrado' : productos.length + ' productos encontrados'}
         </p>
 
-        {productos.length === 0 ? (
+        {cargando ? (
+          <p className="text-center atributo">Cargando productos...</p>
+        ) : productos.length === 0 ? (
           <p className="text-center mensaje-estado">No encontramos productos con esos filtros.</p>
         ) : (
           <div className="row g-4">
