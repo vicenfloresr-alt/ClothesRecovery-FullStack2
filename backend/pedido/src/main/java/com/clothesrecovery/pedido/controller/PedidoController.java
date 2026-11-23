@@ -1,6 +1,7 @@
 package com.clothesrecovery.pedido.controller;
 
 import com.clothesrecovery.pedido.model.Pedido;
+import com.clothesrecovery.pedido.service.ClienteNoEncontradoException;
 import com.clothesrecovery.pedido.service.PedidoService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,13 +15,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/pedidos")
+@RequestMapping("/api/v1/pedidos")
 @Tag(name = "Pedidos", description = "Operaciones relacionadas con los pedidos")
 public class PedidoController {
 
@@ -59,10 +62,16 @@ public class PedidoController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
     @PostMapping
-    public ResponseEntity<Pedido> guardarPedido(
+    public ResponseEntity<?> guardarPedido(
             @Valid @RequestBody Pedido pedido) {
 
-        return ResponseEntity.ok(pedidoService.guardarPedido(pedido));
+        try {
+            return ResponseEntity.ok(pedidoService.guardarPedido(pedido));
+
+        } catch (ClienteNoEncontradoException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
 
     @Operation(summary = "Actualizar un pedido")

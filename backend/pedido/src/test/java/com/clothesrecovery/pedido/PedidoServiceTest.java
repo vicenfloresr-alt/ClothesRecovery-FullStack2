@@ -1,7 +1,10 @@
 package com.clothesrecovery.pedido;
 
+import com.clothesrecovery.pedido.client.ExternalServiceClient;
+import com.clothesrecovery.pedido.dto.ClienteDto;
 import com.clothesrecovery.pedido.model.Pedido;
 import com.clothesrecovery.pedido.repository.PedidoRepository;
+import com.clothesrecovery.pedido.service.ClienteNoEncontradoException;
 import com.clothesrecovery.pedido.service.PedidoService;
 
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,9 @@ class PedidoServiceTest {
 
     @Mock
     private PedidoRepository pedidoRepository;
+
+    @Mock
+    private ExternalServiceClient externalServiceClient;
 
     @InjectMocks
     private PedidoService pedidoService;
@@ -61,10 +67,20 @@ class PedidoServiceTest {
     @Test
     void guardarPedido_debeRetornarPedidoGuardado() {
         Pedido p = crearPedido();
+        when(externalServiceClient.obtenerCliente(10L)).thenReturn(new ClienteDto());
         when(pedidoRepository.save(p)).thenReturn(p);
         Pedido result = pedidoService.guardarPedido(p);
         assertNotNull(result);
         assertEquals(30000.0, result.getTotal());
+    }
+
+    @Test
+    void guardarPedido_clienteNoExiste_debeLanzarExcepcion() {
+        Pedido p = crearPedido();
+        when(externalServiceClient.obtenerCliente(10L)).thenReturn(null);
+        assertThrows(ClienteNoEncontradoException.class,
+                () -> pedidoService.guardarPedido(p));
+        verify(pedidoRepository, never()).save(any(Pedido.class));
     }
 
     @Test

@@ -30,7 +30,7 @@ public class PedidoService {
     public Pedido guardarPedido(Pedido pedido) {
         ClienteDto cliente = externalServiceClient.obtenerCliente(pedido.getClienteId());
         if (cliente == null) {
-            throw new RuntimeException("Cliente no encontrado con id: " + pedido.getClienteId());
+            throw new ClienteNoEncontradoException("Cliente no encontrado con id: " + pedido.getClienteId());
         }
         return pedidoRepository.save(pedido);
     }
