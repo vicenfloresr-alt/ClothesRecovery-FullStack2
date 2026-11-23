@@ -19,4 +19,15 @@ public class TokenGenerator {
                 .withExpiresAt(new Date(System.currentTimeMillis() + 3600000))
                 .sign(algorithm);
     }
+
+    public String createToken(String username, String rol) {
+        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+
+        return JWT.create()
+                .withSubject(username)
+                .withIssuer("servicio-auth")
+                .withClaim("rol", rol)
+                .withExpiresAt(new Date(System.currentTimeMillis() + 3600000))
+                .sign(algorithm);
+    }
 }

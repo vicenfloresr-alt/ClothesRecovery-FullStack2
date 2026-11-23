@@ -45,6 +45,14 @@ class TokenGeneratorTest {
     }
 
     @Test
+    void createToken_conRol_debeContenerRol() {
+        String token = tokenGenerator.createToken("admin@clothesrecovery.cl", "ADMIN");
+        DecodedJWT decoded = JWT.decode(token);
+        assertEquals("ADMIN", decoded.getClaim("rol").asString());
+        assertEquals("admin@clothesrecovery.cl", decoded.getSubject());
+    }
+
+    @Test
     void createToken_distintoUsuario_debeGenerarTokenDistinto() {
         String token1 = tokenGenerator.createToken("usuario1");
         String token2 = tokenGenerator.createToken("usuario2");
