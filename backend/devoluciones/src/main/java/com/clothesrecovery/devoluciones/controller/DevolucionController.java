@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/devoluciones")
+@RequestMapping("/api/v1/devoluciones")
 @Tag(name = "Devoluciones", description = "Operaciones relacionadas con las devoluciones")
 public class DevolucionController {
 

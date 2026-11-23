@@ -44,7 +44,7 @@ public class DevolucionService {
                     "La devolución ya fue resuelta con estado: " + devolucion.getEstado());
         }
 
-        if (!nuevoEstado.equals("APROBADA") && !nuevoEstado.equals("RECHAZADA")) {
+        if (!"APROBADA".equals(nuevoEstado) && !"RECHAZADA".equals(nuevoEstado)) {
             throw new EstadoInvalidoException(
                     "Estado no válido: " + nuevoEstado);
         }

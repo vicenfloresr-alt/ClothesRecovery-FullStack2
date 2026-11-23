@@ -36,7 +36,6 @@ public class Devolucion {
     @Column(nullable = false)
     private String motivo;
 
-    @NotBlank
     @Column(nullable = false)
     private String estado;
 
