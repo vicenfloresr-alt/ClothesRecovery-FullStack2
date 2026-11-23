@@ -24,4 +24,9 @@ public class JwtProvider {
         DecodedJWT decodedJWT = JWT.decode(token);
         return decodedJWT.getSubject();
     }
+
+    public String extractRol(String token) {
+        DecodedJWT decodedJWT = JWT.decode(token);
+        return decodedJWT.getClaim("rol").asString();
+    }
 }
