@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { agregarUsuario, existeCorreo } from '../data/usuarios';
+import { registrarUsuarioApi } from '../data/usuarios';
 import DireccionFields from '../components/DireccionFields';
 
 function Registro() {
@@ -11,6 +11,7 @@ function Registro() {
     fechaNacimiento: '',
     correo: '',
     password: '',
+    telefono: '',
     calle: '',
     departamento: '',
     region: '',
@@ -19,6 +20,7 @@ function Registro() {
   });
   const [error, setError] = useState('');
   const [exito, setExito] = useState(false);
+  const [enviando, setEnviando] = useState(false);
   const navigate = useNavigate();
 
   function cambiarCampo(nombre, valor) {
@@ -29,7 +31,7 @@ function Registro() {
     cambiarCampo(evento.target.name, evento.target.value);
   }
 
-  function manejarSubmit(evento) {
+  async function manejarSubmit(evento) {
     evento.preventDefault();
 
     if (!form.run || !form.nombre || !form.apellidos || !form.fechaNacimiento || !form.correo || !form.password) {
@@ -38,31 +40,23 @@ function Registro() {
       return;
     }
 
-    if (existeCorreo(form.correo)) {
-      setError('Ya existe una cuenta registrada con ese correo.');
+    setEnviando(true);
+
+    try {
+      await registrarUsuarioApi({
+        nombre: form.nombre + ' ' + form.apellidos,
+        correo: form.correo,
+        password: form.password,
+        telefono: form.telefono,
+      });
+      setError('');
+      setExito(true);
+      setTimeout(() => navigate('/login'), 1200);
+    } catch (e) {
+      setError(e.message);
       setExito(false);
-      return;
+      setEnviando(false);
     }
-
-    agregarUsuario({
-      run: form.run,
-      nombre: form.nombre,
-      apellidos: form.apellidos,
-      fechaNacimiento: form.fechaNacimiento,
-      correo: form.correo,
-      password: form.password,
-      direccion: {
-        calle: form.calle,
-        departamento: form.departamento,
-        region: Number(form.region),
-        comuna: Number(form.comuna),
-        indicaciones: form.indicaciones,
-      },
-    });
-
-    setError('');
-    setExito(true);
-    setTimeout(() => navigate('/login'), 1200);
   }
 
   return (
@@ -107,6 +101,10 @@ function Registro() {
                     <label htmlFor="password" className="form-label">Contraseña <span className="opcional">obligatorio</span></label>
                     <input type="password" className="form-control" id="password" name="password" value={form.password} onChange={manejarCambio} required />
                   </div>
+                  <div className="col-md-6 form-grupo mb-3">
+                    <label htmlFor="telefono" className="form-label">Teléfono <span className="opcional">opcional</span></label>
+                    <input type="tel" className="form-control" id="telefono" name="telefono" placeholder="ej: 912345678" value={form.telefono} onChange={manejarCambio} />
+                  </div>
                 </div>
 
                 <hr style={{ borderColor: '#2a2a2e' }} />
@@ -116,7 +114,7 @@ function Registro() {
                 <DireccionFields valores={form} onCambiar={cambiarCampo} />
 
                 <div className="text-end">
-                  <button type="submit" className="btn btn-primario">Guardar</button>
+                  <button type="submit" className="btn btn-primario" disabled={enviando}>Guardar</button>
                 </div>
               </form>
             </div>

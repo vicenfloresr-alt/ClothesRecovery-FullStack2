@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { CLAVE_SESION } from '../data/api';
 
 const SesionContext = createContext(null);
-const CLAVE_STORAGE = 'sesion-clothesrecovery';
+const CLAVE_STORAGE = CLAVE_SESION;
 
 function leerSesionGuardada() {
   try {
@@ -31,9 +32,10 @@ export function SesionProvider({ children }) {
   function iniciarSesion(datosUsuario) {
     setUsuario({
       nombre: datosUsuario.nombre,
-      apellidos: datosUsuario.apellidos,
-      correo: datosUsuario.correo,
-      direccion: datosUsuario.direccion,
+      correo: datosUsuario.username,
+      rol: datosUsuario.rol,
+      clienteId: datosUsuario.clienteId,
+      token: datosUsuario.token,
     });
   }
 
