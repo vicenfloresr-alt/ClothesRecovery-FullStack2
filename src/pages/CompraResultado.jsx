@@ -21,7 +21,9 @@ function CompraResultado({ exito }) {
   }
 
   let motivo = 'Uno de los productos ya no tiene stock suficiente.';
-  if (pedido.total > LIMITE_PAGO) {
+  if (pedido.motivo) {
+    motivo = pedido.motivo;
+  } else if (pedido.total > LIMITE_PAGO) {
     motivo = `El monto supera el límite de ${formatearPrecio(LIMITE_PAGO)} para pagos en línea.`;
   }
 

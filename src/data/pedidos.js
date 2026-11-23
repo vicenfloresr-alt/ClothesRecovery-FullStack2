@@ -1,3 +1,5 @@
+import { pedirApi } from './api';
+
 const CLAVE_STORAGE = 'pedidos-clothesrecovery';
 
 export const LIMITE_PAGO = 150000;
@@ -62,6 +64,7 @@ export function agregarPedido(datos) {
     direccion: datos.direccion,
     items: items,
     total: datos.total,
+    motivo: datos.motivo || '',
   };
 
   pedidos.push(pedido);
@@ -91,4 +94,20 @@ export function eliminarPedido(numero) {
   }
   pedidos = restantes;
   guardarPedidos();
+}
+
+export function fechaDeHoy() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export async function registrarPedidoApi(datos) {
+  return pedirApi('/pedidos', { method: 'POST', body: datos });
+}
+
+export async function listarPedidosApi() {
+  return pedirApi('/pedidos');
+}
+
+export async function obtenerPedidoApi(id) {
+  return pedirApi('/pedidos/' + id);
 }
