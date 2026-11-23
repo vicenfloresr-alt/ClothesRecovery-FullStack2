@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { obtenerProductos, formatearPrecio } from '../data/productos';
+import { formatearPrecio } from '../data/productos';
 import ProductoCard from '../components/ProductoCard';
 import { useCarrito } from '../context/CarritoContext';
+import { useProductos } from '../context/ProductosContext';
 
 function Carrito() {
   const {
@@ -17,7 +18,7 @@ function Carrito() {
 
   const [codigoAEliminar, setCodigoAEliminar] = useState(null);
 
-  const productos = obtenerProductos();
+  const { productos } = useProductos();
 
   function confirmarEliminar() {
     eliminarDelCarrito(codigoAEliminar);

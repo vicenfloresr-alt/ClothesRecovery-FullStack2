@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { obtenerProductoPorCodigo } from '../data/productos';
+import { useProductos } from './ProductosContext';
 
 const CarritoContext = createContext(null);
 const CLAVE_STORAGE = 'carrito-clothesrecovery';
@@ -17,6 +18,7 @@ function leerCarritoGuardado() {
 
 export function CarritoProvider({ children }) {
   const [items, setItems] = useState(leerCarritoGuardado);
+  const { productos } = useProductos();
 
   useEffect(() => {
     try {
@@ -26,7 +28,7 @@ export function CarritoProvider({ children }) {
   }, [items]);
 
   function stockDe(codigo) {
-    const producto = obtenerProductoPorCodigo(codigo);
+    const producto = obtenerProductoPorCodigo(productos, codigo);
     if (producto === null) {
       return 0;
     }
@@ -57,6 +59,7 @@ export function CarritoProvider({ children }) {
         return false;
       }
       nuevosItems.push({
+        id: producto.id,
         codigo: producto.codigo,
         nombre: producto.nombre,
         precio: producto.precio,
