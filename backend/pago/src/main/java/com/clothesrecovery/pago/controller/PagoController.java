@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/pagos")
+@RequestMapping("/api/v1/pagos")
 @Tag(name = "Pagos", description = "Operaciones relacionadas con los pagos")
 public class PagoController {
 

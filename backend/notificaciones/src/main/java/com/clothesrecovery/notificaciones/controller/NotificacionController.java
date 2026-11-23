@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/notificaciones")
+@RequestMapping("/api/v1/notificaciones")
 @Tag(name = "Notificaciones", description = "Operaciones relacionadas con las notificaciones")
 public class NotificacionController {
 

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/resenas")
+@RequestMapping("/api/v1/resenas")
 @Tag(name = "Reseñas", description = "Operaciones relacionadas con las reseñas de productos")
 public class ResenaController {
 
