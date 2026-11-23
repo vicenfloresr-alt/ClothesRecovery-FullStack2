@@ -3,8 +3,9 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import CompraResultado from './CompraResultado';
 import { agregarPedido, eliminarPedido } from '../data/pedidos';
 
-function montarConPedido(exito, total) {
+function montarConPedido(exito, total, motivo) {
   const pedido = agregarPedido({
+    motivo: motivo,
     estado: exito ? 'pagado' : 'rechazado',
     cliente: { nombre: 'Ana', apellidos: 'Pérez', correo: 'ana@correo.cl' },
     direccion: { calle: 'Calle 1', departamento: '', region: 1000, comuna: 1001, indicaciones: '' },
@@ -52,6 +53,11 @@ describe('CompraResultado', () => {
   it('en el error por stock explica que falta stock', () => {
     pedido = montarConPedido(false, 17980);
     expect(screen.getByText(/ya no tiene stock suficiente/)).toBeTruthy();
+  });
+
+  it('si el backend rechazó la compra muestra el motivo que entregó', () => {
+    pedido = montarConPedido(false, 17980, 'Stock insuficiente para Polera Oversize Negra. Disponible: 0');
+    expect(screen.getByText('Stock insuficiente para Polera Oversize Negra. Disponible: 0')).toBeTruthy();
   });
 
   it('muestra el nombre del cliente y el producto comprado', () => {

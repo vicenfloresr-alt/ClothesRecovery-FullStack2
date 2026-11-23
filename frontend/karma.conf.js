@@ -42,7 +42,7 @@ module.exports = function (config) {
               options: {
                 presets: [[require.resolve('babel-preset-react-app'), { runtime: 'automatic' }]],
                 plugins: [
-                  [require.resolve('babel-plugin-istanbul'), { exclude: ['**/*.spec.js', '**/*.spec.jsx'] }],
+                  [require.resolve('babel-plugin-istanbul'), { exclude: ['**/*.spec.js', '**/*.spec.jsx', '**/test-utils/**'] }],
                 ],
               },
             },

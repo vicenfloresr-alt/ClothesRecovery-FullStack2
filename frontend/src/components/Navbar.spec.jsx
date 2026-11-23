@@ -54,6 +54,24 @@ describe('Navbar', () => {
     expect(screen.getByTestId('ruta').textContent).toBe('/');
   });
 
+  it('con sesión de ADMIN muestra el acceso al Panel', () => {
+    localStorage.setItem('sesion-clothesrecovery', JSON.stringify({ nombre: 'Administrador', correo: 'admin@clothesrecovery.cl', rol: 'ADMIN', token: 't' }));
+    montar();
+    expect(screen.getAllByText('Panel').length).toBeGreaterThan(0);
+  });
+
+  it('con sesión de VENDEDOR también muestra el Panel', () => {
+    localStorage.setItem('sesion-clothesrecovery', JSON.stringify({ nombre: 'Vendedor', correo: 'v@clothesrecovery.cl', rol: 'VENDEDOR', token: 't' }));
+    montar();
+    expect(screen.getAllByText('Panel').length).toBeGreaterThan(0);
+  });
+
+  it('con sesión de CLIENTE no muestra el Panel', () => {
+    localStorage.setItem('sesion-clothesrecovery', JSON.stringify({ nombre: 'Ana', correo: 'a@a.cl', rol: 'CLIENTE', token: 't' }));
+    montar();
+    expect(screen.queryByText('Panel')).toBeNull();
+  });
+
   it('el buscador navega a /productos con el texto en la URL', () => {
     montar();
     fireEvent.change(screen.getByLabelText('Buscar'), { target: { value: 'polera negra' } });
