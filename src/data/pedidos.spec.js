@@ -6,7 +6,12 @@ import {
   agregarPedido,
   editarPedido,
   eliminarPedido,
+  fechaDeHoy,
+  registrarPedidoApi,
+  listarPedidosApi,
+  obtenerPedidoApi,
 } from './pedidos';
+import { simularApi, cuerpoEnviado } from '../test-utils/simularApi';
 
 describe('pedidos.js', () => {
   const datos = {
@@ -126,6 +131,43 @@ describe('pedidos.js', () => {
         creado = agregarPedido(datos);
       }).not.toThrow();
       expect(obtenerPedidoPorNumero(creado.numero)).not.toBeNull();
+    });
+  });
+
+  describe('motivo del rechazo', () => {
+    it('guarda el motivo cuando se indica', () => {
+      creado = agregarPedido({ ...datos, estado: 'rechazado', motivo: 'Stock insuficiente' });
+      expect(creado.motivo).toBe('Stock insuficiente');
+    });
+
+    it('sin motivo guarda un texto vacío', () => {
+      creado = agregarPedido(datos);
+      expect(creado.motivo).toBe('');
+    });
+  });
+
+  describe('pedidos en el backend (fetch simulado)', () => {
+    it('fechaDeHoy devuelve la fecha con formato AAAA-MM-DD', () => {
+      expect(fechaDeHoy()).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    });
+
+    it('registrarPedidoApi hace POST /pedidos con los datos del pedido', async () => {
+      const espia = simularApi([{ ruta: '/pedidos', metodo: 'POST', datos: { id: 7 } }]);
+      const pedido = await registrarPedidoApi({ clienteId: 3, productoId: 1, cantidad: 2 });
+      expect(pedido.id).toBe(7);
+      expect(cuerpoEnviado(espia, 0).clienteId).toBe(3);
+    });
+
+    it('listarPedidosApi hace GET /pedidos', async () => {
+      simularApi([{ ruta: '/pedidos', datos: [{ id: 1 }, { id: 2 }] }]);
+      const pedidos = await listarPedidosApi();
+      expect(pedidos.length).toBe(2);
+    });
+
+    it('obtenerPedidoApi hace GET /pedidos/{id}', async () => {
+      simularApi([{ ruta: '/pedidos/5', datos: { id: 5, estadoPedido: 'PAGADO' } }]);
+      const pedido = await obtenerPedidoApi(5);
+      expect(pedido.estadoPedido).toBe('PAGADO');
     });
   });
 });

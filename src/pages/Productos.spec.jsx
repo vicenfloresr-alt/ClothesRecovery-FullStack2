@@ -3,13 +3,17 @@ import { MemoryRouter } from 'react-router-dom';
 import Productos from './Productos';
 import Ofertas from './Ofertas';
 import { CarritoProvider } from '../context/CarritoContext';
-import { obtenerProductos } from '../data/productos';
+import { ProductosProvider } from '../context/ProductosContext';
+import { PRODUCTOS_DE_PRUEBA } from '../test-utils/productosDePrueba';
+import { simularApi } from '../test-utils/simularApi';
 
-function montar(vista, ruta) {
+function montar(vista, ruta, productosIniciales = PRODUCTOS_DE_PRUEBA) {
   render(
-    <CarritoProvider>
-      <MemoryRouter initialEntries={[ruta]}>{vista}</MemoryRouter>
-    </CarritoProvider>
+    <ProductosProvider productosIniciales={productosIniciales}>
+      <CarritoProvider>
+        <MemoryRouter initialEntries={[ruta]}>{vista}</MemoryRouter>
+      </CarritoProvider>
+    </ProductosProvider>
   );
 }
 
@@ -26,7 +30,7 @@ describe('Productos (lista y filtros)', () => {
 
   it('muestra una tarjeta por cada producto del arreglo de datos', () => {
     montar(<Productos />, '/productos');
-    expect(tarjetas().length).toBe(obtenerProductos().length);
+    expect(tarjetas().length).toBe(PRODUCTOS_DE_PRUEBA.length);
   });
 
   it('el texto de la URL (?q=) filtra la lista', () => {
@@ -71,14 +75,51 @@ describe('Productos (lista y filtros)', () => {
     montar(<Productos />, '/productos?q=botas');
     expect(tarjetas().length).toBe(1);
     fireEvent.change(screen.getByLabelText('Buscar'), { target: { value: '' } });
-    expect(tarjetas().length).toBe(obtenerProductos().length);
+    expect(tarjetas().length).toBe(PRODUCTOS_DE_PRUEBA.length);
   });
 
   it('el botón Limpiar quita los filtros y vuelve a mostrar todo', () => {
     montar(<Productos />, '/productos?q=botas&categoria=Calzado');
     expect(tarjetas().length).toBe(1);
     fireEvent.click(screen.getByText('Limpiar'));
-    expect(tarjetas().length).toBe(obtenerProductos().length);
+    expect(tarjetas().length).toBe(PRODUCTOS_DE_PRUEBA.length);
+  });
+
+  it('mientras carga desde el backend muestra "Cargando productos..."', () => {
+    spyOn(window, 'fetch').and.returnValue(new Promise(() => {}));
+    render(
+      <ProductosProvider>
+        <CarritoProvider>
+          <MemoryRouter initialEntries={['/productos']}><Productos /></MemoryRouter>
+        </CarritoProvider>
+      </ProductosProvider>
+    );
+    expect(screen.getByText('Cargando productos...')).toBeTruthy();
+  });
+
+  it('carga los productos desde el backend con fetch', async () => {
+    simularApi([{ ruta: '/productos', datos: [{ id: 1, codigo: 'POL-001', nombreProducto: 'Polera del backend', descripcion: 'x', precio: 1000, categoria: 'Poleras', talla: 'M', imagen: '/a.jpg', stock: 3 }] }]);
+    render(
+      <ProductosProvider>
+        <CarritoProvider>
+          <MemoryRouter initialEntries={['/productos']}><Productos /></MemoryRouter>
+        </CarritoProvider>
+      </ProductosProvider>
+    );
+    expect(await screen.findByText('Polera del backend')).toBeTruthy();
+    expect(tarjetas().length).toBe(1);
+  });
+
+  it('si el backend está apagado muestra el aviso de conexión', async () => {
+    simularApi([{ ruta: '/productos', falla: true }]);
+    render(
+      <ProductosProvider>
+        <CarritoProvider>
+          <MemoryRouter initialEntries={['/productos']}><Productos /></MemoryRouter>
+        </CarritoProvider>
+      </ProductosProvider>
+    );
+    expect(await screen.findByText(/No se pudo conectar con el servidor/)).toBeTruthy();
   });
 });
 

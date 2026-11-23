@@ -2,11 +2,13 @@ import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { SesionProvider, useSesion } from './SesionContext';
 
 const usuarioDePrueba = {
+  id: 7,
   nombre: 'Ana',
-  apellidos: 'Pérez',
-  correo: 'ana@correo.cl',
+  username: 'ana@correo.cl',
   password: 'secreta',
-  direccion: { calle: 'Calle 1' },
+  rol: 'CLIENTE',
+  clienteId: 3,
+  token: 'token-de-prueba',
 };
 
 function Panel() {
@@ -52,6 +54,16 @@ describe('SesionContext', () => {
     const guardado = JSON.parse(localStorage.getItem('sesion-clothesrecovery'));
     expect(guardado.nombre).toBe('Ana');
     expect(guardado.password).toBeUndefined();
+  });
+
+  it('guarda el correo, el rol, el clienteId y el token que entrega el backend', () => {
+    montar();
+    fireEvent.click(screen.getByText('entrar'));
+    const guardado = JSON.parse(localStorage.getItem('sesion-clothesrecovery'));
+    expect(guardado.correo).toBe('ana@correo.cl');
+    expect(guardado.rol).toBe('CLIENTE');
+    expect(guardado.clienteId).toBe(3);
+    expect(guardado.token).toBe('token-de-prueba');
   });
 
   it('cerrarSesion quita al usuario y borra lo guardado', () => {

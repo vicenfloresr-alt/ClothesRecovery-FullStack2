@@ -10,6 +10,7 @@ function ProductoCard({ producto, onAgregar, claseColumna = 'col-md-6 col-lg-3' 
 
   function manejarClic() {
     const seAgrego = onAgregar({
+      id: producto.id,
       codigo: producto.codigo,
       nombre: producto.nombre,
       precio: precioFinal,

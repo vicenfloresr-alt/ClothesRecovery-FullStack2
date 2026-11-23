@@ -1,10 +1,12 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { CarritoProvider, useCarrito } from './CarritoContext';
+import { ProductosProvider } from './ProductosContext';
+import { PRODUCTOS_DE_PRUEBA } from '../test-utils/productosDePrueba';
 
 function Panel() {
   const { items, agregarAlCarrito, cambiarCantidad, eliminarDelCarrito, vaciarCarrito, totalUnidades, totalPrecio } = useCarrito();
-  const chaqueta = { codigo: 'CHA-001', nombre: 'Chaqueta', precio: 1000, imagen: '/a.jpg' };
-  const polera = { codigo: 'POL-001', nombre: 'Polera', precio: 500, imagen: '/b.jpg' };
+  const chaqueta = { id: 8, codigo: 'CHA-001', nombre: 'Chaqueta', precio: 1000, imagen: '/a.jpg' };
+  const polera = { id: 1, codigo: 'POL-001', nombre: 'Polera', precio: 500, imagen: '/b.jpg' };
   const inexistente = { codigo: 'XXX-999', nombre: 'Nada', precio: 1, imagen: '/c.jpg' };
   let ultimo = '';
   return (
@@ -28,9 +30,11 @@ function Panel() {
 
 function montar() {
   return render(
-    <CarritoProvider>
-      <Panel />
-    </CarritoProvider>
+    <ProductosProvider productosIniciales={PRODUCTOS_DE_PRUEBA}>
+      <CarritoProvider>
+        <Panel />
+      </CarritoProvider>
+    </ProductosProvider>
   );
 }
 
@@ -128,6 +132,7 @@ describe('CarritoContext', () => {
     const guardado = JSON.parse(localStorage.getItem('carrito-clothesrecovery'));
     expect(guardado.length).toBe(1);
     expect(guardado[0].codigo).toBe('POL-001');
+    expect(guardado[0].id).toBe(1);
   });
 
   it('recupera el carrito guardado al volver a montar (simula recargar)', () => {

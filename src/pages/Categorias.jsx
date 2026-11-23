@@ -3,12 +3,14 @@ import { obtenerCategorias, obtenerCategoriaPorNombre } from '../data/categorias
 import { obtenerProductosPorCategoria } from '../data/productos';
 import ProductoCard from '../components/ProductoCard';
 import { useCarrito } from '../context/CarritoContext';
+import { useProductos } from '../context/ProductosContext';
 
 function Categorias() {
   const { nombre } = useParams();
   const { agregarAlCarrito } = useCarrito();
   const categorias = obtenerCategorias();
   const categoria = obtenerCategoriaPorNombre(nombre);
+  const { productos: todosLosProductos, cargando } = useProductos();
 
   if (categoria === null) {
     return (
@@ -21,7 +23,7 @@ function Categorias() {
     );
   }
 
-  const productos = obtenerProductosPorCategoria(categoria.nombre);
+  const productos = obtenerProductosPorCategoria(todosLosProductos, categoria.nombre);
 
   return (
     <main>
@@ -44,7 +46,8 @@ function Categorias() {
       <section className="py-5">
         <div className="container">
           <h2 className="mb-4">{categoria.nombre}</h2>
-          {productos.length === 0 && <p className="atributo">Aún no hay productos en esta categoría.</p>}
+          {cargando && <p className="atributo">Cargando productos...</p>}
+          {!cargando && productos.length === 0 && <p className="atributo">Aún no hay productos en esta categoría.</p>}
           <div className="row g-4">
             {productos.map((producto) => (
               <ProductoCard key={producto.codigo} producto={producto} onAgregar={agregarAlCarrito} />

@@ -1,14 +1,14 @@
-import { obtenerProductos } from '../data/productos';
 import { obtenerCategorias } from '../data/categorias';
 import ProductoCard from '../components/ProductoCard';
 import CategoriaCard from '../components/CategoriaCard';
 import { useCarrito } from '../context/CarritoContext';
+import { useProductos } from '../context/ProductosContext';
 
 function Home() {
   const { agregarAlCarrito } = useCarrito();
   const categorias = obtenerCategorias();
+  const { productos: todosLosProductos, cargando, error } = useProductos();
 
-  const todosLosProductos = obtenerProductos();
   const destacados = [];
   for (let i = 0; i < todosLosProductos.length && destacados.length < 8; i++) {
     destacados.push(todosLosProductos[i]);
@@ -38,7 +38,7 @@ function Home() {
             </div>
           </div>
           <div className="carousel-item">
-            <img src="/img/productos/calzado1.webp" className="d-block w-100 carousel-imagen" alt="Calzado ClothesRecovery" />
+            <img src="/img/productos/calzado1.jpg" className="d-block w-100 carousel-imagen" alt="Calzado ClothesRecovery" />
             <div className="carousel-caption d-none d-md-block">
               <h5>Moda circular</h5>
               <p>Segunda vida para prendas buenas, a precios justos.</p>
@@ -67,6 +67,8 @@ function Home() {
       <section className="py-5" style={{ backgroundColor: '#0f0f11' }}>
         <div className="container">
           <h2 className="text-center mb-4">Destacados de la semana</h2>
+          {cargando && <p className="text-center atributo">Cargando productos...</p>}
+          {error && <p className="text-center mensaje-error">{error}</p>}
           <div className="row g-4">
             {destacados.map((producto) => (
               <ProductoCard key={producto.codigo} producto={producto} onAgregar={agregarAlCarrito} />

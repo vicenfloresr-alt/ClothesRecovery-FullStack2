@@ -1,24 +1,36 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { validarCredenciales } from '../data/usuarios';
+import { iniciarSesionApi } from '../data/usuarios';
 import { useSesion } from '../context/SesionContext';
 
 function Login() {
   const [correo, setCorreo] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
+  const [enviando, setEnviando] = useState(false);
   const navigate = useNavigate();
   const { iniciarSesion } = useSesion();
 
-  function manejarSubmit(evento) {
+  async function manejarSubmit(evento) {
     evento.preventDefault();
-    const usuario = validarCredenciales(correo, password);
-    if (usuario !== null) {
-      setError(false);
+    setError('');
+    setEnviando(true);
+
+    try {
+      const usuario = await iniciarSesionApi(correo, password);
       iniciarSesion(usuario);
-      navigate('/');
-    } else {
-      setError(true);
+      if (usuario.rol === 'ADMIN' || usuario.rol === 'VENDEDOR') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
+    } catch (e) {
+      if (e.status === 401) {
+        setError('Correo o contraseña incorrectos.');
+      } else {
+        setError('No se pudo conectar con el servidor. Intenta más tarde.');
+      }
+      setEnviando(false);
     }
   }
 
@@ -36,7 +48,7 @@ function Login() {
 
                 {error && (
                   <div className="mensaje-error mb-3" style={{ display: 'block', textAlign: 'center' }}>
-                    Correo o contraseña incorrectos.
+                    {error}
                   </div>
                 )}
 
@@ -67,11 +79,9 @@ function Login() {
                     <Link to="/registro">¿No tienes cuenta? Regístrate aquí</Link>
                   </div>
 
-                  <button type="submit" className="btn btn-primario w-100">INICIAR SESIÓN</button>
-
-                  <p className="pista text-center mt-3">
-                    Prueba con <strong>pixu@clothesrecovery.cl</strong> / <strong>12345</strong>
-                  </p>
+                  <button type="submit" className="btn btn-primario w-100" disabled={enviando}>
+                    {enviando ? 'INGRESANDO...' : 'INICIAR SESIÓN'}
+                  </button>
                 </form>
               </div>
             </div>

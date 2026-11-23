@@ -7,14 +7,26 @@ import {
   obtenerPrecioFinal,
 } from '../data/productos';
 import { useCarrito } from '../context/CarritoContext';
+import { useProductos } from '../context/ProductosContext';
 
 function ProductoDetalle() {
   const { codigo } = useParams();
   const { agregarAlCarrito } = useCarrito();
   const [sinStock, setSinStock] = useState(false);
   const [agregado, setAgregado] = useState(false);
+  const { productos, cargando } = useProductos();
 
-  const producto = obtenerProductoPorCodigo(codigo);
+  const producto = obtenerProductoPorCodigo(productos, codigo);
+
+  if (cargando) {
+    return (
+      <main>
+        <section className="container py-5 text-center">
+          <p className="atributo">Cargando producto...</p>
+        </section>
+      </main>
+    );
+  }
 
   if (producto === null) {
     return (
@@ -32,6 +44,7 @@ function ProductoDetalle() {
 
   function manejarAgregar() {
     const seAgrego = agregarAlCarrito({
+      id: producto.id,
       codigo: producto.codigo,
       nombre: producto.nombre,
       precio: precioFinal,
@@ -72,6 +85,7 @@ function ProductoDetalle() {
               <ul className="mb-4 atributo">
                 <li>Categoría: {producto.categoria}</li>
                 <li>Código: {producto.codigo}</li>
+                <li>Talla: {producto.talla}</li>
                 <li>Stock disponible: {producto.stock}</li>
               </ul>
 

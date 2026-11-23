@@ -1,28 +1,18 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { formatearPrecio, descontarStock } from '../data/productos';
-import { agregarPedido, procesarPago } from '../data/pedidos';
+import { formatearPrecio, descontarStock, obtenerProductoPorCodigo } from '../data/productos';
+import { agregarPedido, procesarPago, registrarPedidoApi, fechaDeHoy } from '../data/pedidos';
 import DireccionFields from '../components/DireccionFields';
 import { useCarrito } from '../context/CarritoContext';
 import { useSesion } from '../context/SesionContext';
+import { useProductos } from '../context/ProductosContext';
 
 function formularioInicial(usuario) {
-  if (usuario === null) {
-    return {
-      nombre: '', apellidos: '', correo: '',
-      calle: '', departamento: '', region: '', comuna: '', indicaciones: '',
-    };
-  }
-  const direccion = usuario.direccion || {};
   return {
-    nombre: usuario.nombre,
-    apellidos: usuario.apellidos,
-    correo: usuario.correo,
-    calle: direccion.calle || '',
-    departamento: direccion.departamento || '',
-    region: direccion.region ? String(direccion.region) : '',
-    comuna: direccion.comuna ? String(direccion.comuna) : '',
-    indicaciones: direccion.indicaciones || '',
+    nombre: usuario !== null ? usuario.nombre : '',
+    apellidos: '',
+    correo: usuario !== null ? usuario.correo : '',
+    calle: '', departamento: '', region: '', comuna: '', indicaciones: '',
   };
 }
 
@@ -30,8 +20,12 @@ function Comprar() {
   const { items, totalPrecio, vaciarCarrito, stockDe } = useCarrito();
   const navigate = useNavigate();
   const { usuario } = useSesion();
+  const { productos, recargarProductos } = useProductos();
 
   const [form, setForm] = useState(() => formularioInicial(usuario));
+  const [procesando, setProcesando] = useState(false);
+
+  const esCliente = usuario !== null && usuario.rol === 'CLIENTE';
 
   function cambiarCampo(nombre, valor) {
     setForm((anterior) => ({ ...anterior, [nombre]: valor }));
@@ -50,10 +44,46 @@ function Comprar() {
     return false;
   }
 
-  function manejarPago(evento) {
-    evento.preventDefault();
+  function idDelProducto(item) {
+    const producto = obtenerProductoPorCodigo(productos, item.codigo);
+    if (producto !== null) {
+      return producto.id;
+    }
+    return item.id;
+  }
 
-    const pagoAceptado = !hayProblemaDeStock() && procesarPago(totalPrecio);
+  async function enviarAlBackend() {
+    for (let i = 0; i < items.length; i++) {
+      await descontarStock(idDelProducto(items[i]), items[i].cantidad);
+    }
+    for (let i = 0; i < items.length; i++) {
+      await registrarPedidoApi({
+        clienteId: usuario.clienteId,
+        productoId: idDelProducto(items[i]),
+        cantidad: items[i].cantidad,
+        total: items[i].precio * items[i].cantidad,
+        estadoPedido: 'PAGADO',
+        fechaPedido: fechaDeHoy(),
+      });
+    }
+  }
+
+  async function manejarPago(evento) {
+    evento.preventDefault();
+    setProcesando(true);
+
+    let pagoAceptado = !hayProblemaDeStock() && procesarPago(totalPrecio);
+    let motivo = '';
+
+    if (pagoAceptado) {
+      try {
+        await enviarAlBackend();
+      } catch (e) {
+        pagoAceptado = false;
+        motivo = e.message;
+      }
+      await recargarProductos();
+    }
 
     const pedido = agregarPedido({
       estado: pagoAceptado ? 'pagado' : 'rechazado',
@@ -71,12 +101,10 @@ function Comprar() {
       },
       items: items,
       total: totalPrecio,
+      motivo: motivo,
     });
 
     if (pagoAceptado) {
-      for (let i = 0; i < items.length; i++) {
-        descontarStock(items[i].codigo, items[i].cantidad);
-      }
       vaciarCarrito();
       navigate(`/comprar/ok/${pedido.numero}`);
     } else {
@@ -91,6 +119,19 @@ function Comprar() {
           <h1>Tu carrito está vacío</h1>
           <p className="atributo">Añade productos antes de continuar con la compra.</p>
           <Link to="/productos" className="btn btn-primario">Ver productos</Link>
+        </section>
+      </main>
+    );
+  }
+
+  if (!esCliente) {
+    return (
+      <main>
+        <section className="container py-5 text-center">
+          <h1>Inicia sesión para comprar</h1>
+          <p className="atributo">Para finalizar la compra necesitas una cuenta de cliente.</p>
+          <Link to="/login" className="btn btn-primario me-2">Iniciar sesión</Link>
+          <Link to="/registro" className="btn btn-secundario">Crear cuenta</Link>
         </section>
       </main>
     );
@@ -140,9 +181,7 @@ function Comprar() {
               <form onSubmit={manejarPago}>
                 <h4 className="mb-1">Información del cliente</h4>
                 <p className="form-subtitulo">
-                  {usuario === null
-                    ? 'Completa la siguiente información'
-                    : 'Completamos tus datos con tu sesión iniciada. Puedes cambiarlos antes de pagar.'}
+                  Completamos tus datos con tu sesión iniciada. Puedes cambiarlos antes de pagar.
                 </p>
                 <div className="row">
                   <div className="col-md-6 form-grupo mb-3">
@@ -164,7 +203,7 @@ function Comprar() {
                 <DireccionFields valores={form} onCambiar={cambiarCampo} />
 
                 <div className="text-end">
-                  <button type="submit" className="btn btn-primario btn-lg">
+                  <button type="submit" className="btn btn-primario btn-lg" disabled={procesando}>
                     Pagar ahora <strong>{formatearPrecio(totalPrecio)}</strong>
                   </button>
                 </div>

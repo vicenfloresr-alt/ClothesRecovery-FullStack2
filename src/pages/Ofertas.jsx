@@ -1,10 +1,12 @@
 import { obtenerProductosEnOferta, PORCENTAJE_DESCUENTO } from '../data/productos';
 import ProductoCard from '../components/ProductoCard';
 import { useCarrito } from '../context/CarritoContext';
+import { useProductos } from '../context/ProductosContext';
 
 function Ofertas() {
   const { agregarAlCarrito } = useCarrito();
-  const productos = obtenerProductosEnOferta();
+  const { productos: todosLosProductos, cargando } = useProductos();
+  const productos = obtenerProductosEnOferta(todosLosProductos);
 
   return (
     <main>
@@ -12,6 +14,7 @@ function Ofertas() {
         <div className="container">
           <h2 className="mb-1">Las mejores OFERTAS de la semana</h2>
           <p className="atributo mb-4">{PORCENTAJE_DESCUENTO}% de descuento en prendas seleccionadas.</p>
+          {cargando && <p className="atributo">Cargando productos...</p>}
           <div className="row g-4">
             {productos.map((producto) => (
               <ProductoCard key={producto.codigo} producto={producto} onAgregar={agregarAlCarrito} />

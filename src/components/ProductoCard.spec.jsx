@@ -2,9 +2,10 @@ import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import ProductoCard from './ProductoCard';
 import { obtenerProductoPorCodigo, calcularPrecioOferta, formatearPrecio } from '../data/productos';
+import { PRODUCTOS_DE_PRUEBA } from '../test-utils/productosDePrueba';
 
 function montar(codigo, onAgregar) {
-  const producto = obtenerProductoPorCodigo(codigo);
+  const producto = obtenerProductoPorCodigo(PRODUCTOS_DE_PRUEBA, codigo);
   render(
     <MemoryRouter>
       <ProductoCard producto={producto} onAgregar={onAgregar} />
@@ -40,7 +41,7 @@ describe('ProductoCard', () => {
     fireEvent.click(screen.getByText('Añadir al carrito'));
     expect(onAgregar).toHaveBeenCalledTimes(1);
     expect(onAgregar).toHaveBeenCalledWith(
-      jasmine.objectContaining({ codigo: 'POL-002', precio: calcularPrecioOferta(producto.precio) })
+      jasmine.objectContaining({ id: 2, codigo: 'POL-002', precio: calcularPrecioOferta(producto.precio) })
     );
   });
 
@@ -54,6 +55,15 @@ describe('ProductoCard', () => {
     montar('POL-001', () => false);
     fireEvent.click(screen.getByText('Añadir al carrito'));
     expect(screen.getByText('Ya tienes todo el stock en tu carrito.')).toBeTruthy();
+  });
+
+  it('un producto sin stock deshabilita el botón', () => {
+    render(
+      <MemoryRouter>
+        <ProductoCard producto={{ ...PRODUCTOS_DE_PRUEBA[0], stock: 0 }} onAgregar={() => true} />
+      </MemoryRouter>
+    );
+    expect(screen.getByText('Sin stock').disabled).toBeTrue();
   });
 
   it('el enlace del producto apunta a su página de detalle', () => {
