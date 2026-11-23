@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { CarritoProvider } from './context/CarritoContext';
 import { SesionProvider } from './context/SesionContext';
+import { ProductosProvider } from './context/ProductosContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -17,10 +18,12 @@ import Registro from './pages/Registro';
 import Carrito from './pages/Carrito';
 import Comprar from './pages/Comprar';
 import CompraResultado from './pages/CompraResultado';
+import Admin from './pages/Admin';
 
 function App() {
   return (
     <SesionProvider>
+    <ProductosProvider>
     <CarritoProvider>
       <Navbar />
 
@@ -40,10 +43,12 @@ function App() {
         <Route path="/comprar" element={<Comprar />} />
         <Route path="/comprar/ok/:numero" element={<CompraResultado exito={true} />} />
         <Route path="/comprar/error/:numero" element={<CompraResultado exito={false} />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
 
       <Footer />
     </CarritoProvider>
+    </ProductosProvider>
     </SesionProvider>
   );
 }

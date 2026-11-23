@@ -484,3 +484,23 @@ a {
     display: none !important;
   }
 }
+
+.tabs-panel {
+  border-bottom-color: #2a2a2e;
+}
+
+.tabs-panel .tab-panel {
+  color: #e8e2d8;
+  background-color: transparent;
+  border: 1px solid transparent;
+}
+
+.tabs-panel .tab-panel:hover {
+  color: #b3082f;
+}
+
+.tabs-panel .tab-panel.active {
+  color: #b3082f;
+  background-color: #16161a;
+  border-color: #2a2a2e #2a2a2e #16161a;
+}
