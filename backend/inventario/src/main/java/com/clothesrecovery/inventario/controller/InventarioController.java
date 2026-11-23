@@ -2,6 +2,7 @@ package com.clothesrecovery.inventario.controller;
 
 import com.clothesrecovery.inventario.model.Inventario;
 import com.clothesrecovery.inventario.service.InventarioService;
+import com.clothesrecovery.inventario.service.StockInsuficienteException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,12 +10,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/inventario")
+@RequestMapping("/api/v1/inventario")
 @Tag(name = "Inventario", description = "Operaciones relacionadas con el inventario")
 public class InventarioController {
 
@@ -29,14 +33,28 @@ public class InventarioController {
 
     @Operation(summary = "Buscar inventario por ID")
     @GetMapping("/{id}")
-    public Inventario buscarPorId(@PathVariable Long id) {
-        return inventarioService.buscarPorId(id);
+    public ResponseEntity<Inventario> buscarPorId(@PathVariable Long id) {
+
+        Inventario inventario = inventarioService.buscarPorId(id);
+
+        if (inventario != null) {
+            return ResponseEntity.ok(inventario);
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
     @Operation(summary = "Buscar inventario por ID del producto")
     @GetMapping("/producto/{productoId}")
-    public Inventario buscarPorProductoId(@PathVariable Long productoId) {
-        return inventarioService.buscarPorProductoId(productoId);
+    public ResponseEntity<Inventario> buscarPorProductoId(@PathVariable Long productoId) {
+
+        Inventario inventario = inventarioService.buscarPorProductoId(productoId);
+
+        if (inventario != null) {
+            return ResponseEntity.ok(inventario);
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
     @Operation(summary = "Guardar un nuevo registro de inventario")
@@ -47,29 +65,47 @@ public class InventarioController {
 
     @Operation(summary = "Actualizar un registro de inventario")
     @PutMapping("/{id}")
-    public Inventario actualizarInventario(
+    public ResponseEntity<Inventario> actualizarInventario(
             @PathVariable Long id,
             @Valid @RequestBody Inventario inventario) {
 
-        return inventarioService.actualizarInventario(id, inventario);
+        Inventario inventarioActualizado = inventarioService.actualizarInventario(id, inventario);
+
+        if (inventarioActualizado != null) {
+            return ResponseEntity.ok(inventarioActualizado);
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
     @Operation(summary = "Descontar stock de un producto")
     @PutMapping("/descontar/{productoId}/{cantidad}")
-    public Inventario descontarStock(
+    public ResponseEntity<?> descontarStock(
             @PathVariable Long productoId,
             @PathVariable Integer cantidad) {
 
-        return inventarioService.descontarStock(productoId, cantidad);
+        try {
+            return ResponseEntity.ok(inventarioService.descontarStock(productoId, cantidad));
+
+        } catch (StockInsuficienteException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
 
     @Operation(summary = "Reponer stock de un producto")
     @PutMapping("/reponer/{productoId}/{cantidad}")
-    public Inventario reponerStock(
+    public ResponseEntity<?> reponerStock(
             @PathVariable Long productoId,
             @PathVariable Integer cantidad) {
 
-        return inventarioService.reponerStock(productoId, cantidad);
+        try {
+            return ResponseEntity.ok(inventarioService.reponerStock(productoId, cantidad));
+
+        } catch (StockInsuficienteException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
 
     @Operation(summary = "Eliminar un registro de inventario")

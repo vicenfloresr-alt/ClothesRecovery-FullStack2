@@ -48,6 +48,10 @@ public class InventarioService {
 
     public Inventario descontarStock(Long productoId, Integer cantidad) {
 
+        if (cantidad == null || cantidad <= 0) {
+            throw new StockInsuficienteException("La cantidad debe ser mayor a 0");
+        }
+
         Inventario inventario = inventarioRepository.findByProductoId(productoId)
                 .orElseThrow(() -> new StockInsuficienteException(
                         "No existe inventario registrado para el producto " + productoId));
@@ -64,6 +68,10 @@ public class InventarioService {
     }
 
     public Inventario reponerStock(Long productoId, Integer cantidad) {
+
+        if (cantidad == null || cantidad <= 0) {
+            throw new StockInsuficienteException("La cantidad debe ser mayor a 0");
+        }
 
         Inventario inventario = inventarioRepository.findByProductoId(productoId)
                 .orElseThrow(() -> new StockInsuficienteException(
