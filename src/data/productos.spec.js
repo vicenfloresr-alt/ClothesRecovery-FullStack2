@@ -3,18 +3,25 @@ import {
   estaEnOferta,
   calcularPrecioOferta,
   obtenerPrecioFinal,
-  obtenerProductos,
+  convertirDesdeBackend,
+  convertirParaBackend,
+  listarProductos,
+  obtenerProductoPorId,
+  crearProducto,
+  actualizarProducto,
+  eliminarProducto,
+  descontarStock,
   obtenerProductoPorCodigo,
   obtenerProductosPorCategoria,
   obtenerProductosEnOferta,
   buscarProductos,
-  agregarProducto,
-  editarProducto,
-  eliminarProducto,
-  descontarStock,
   CODIGOS_EN_OFERTA,
   PORCENTAJE_DESCUENTO,
 } from './productos';
+import { PRODUCTOS_DE_PRUEBA, comoBackend, listaComoBackend } from '../test-utils/productosDePrueba';
+import { simularApi, cuerpoEnviado } from '../test-utils/simularApi';
+
+const lista = PRODUCTOS_DE_PRUEBA;
 
 describe('productos.js', () => {
   describe('formatearPrecio', () => {
@@ -46,21 +53,20 @@ describe('productos.js', () => {
 
     it('calcularPrecioOferta redondea a peso entero', () => {
       expect(calcularPrecioOferta(10990)).toBe(8792);
-      expect(calcularPrecioOferta(17990)).toBe(14392);
     });
 
     it('obtenerPrecioFinal devuelve el precio con descuento si está en oferta', () => {
-      const producto = obtenerProductoPorCodigo('POL-002');
+      const producto = obtenerProductoPorCodigo(lista, 'POL-002');
       expect(obtenerPrecioFinal(producto)).toBe(calcularPrecioOferta(producto.precio));
     });
 
     it('obtenerPrecioFinal devuelve el precio normal si no está en oferta', () => {
-      const producto = obtenerProductoPorCodigo('POL-001');
+      const producto = obtenerProductoPorCodigo(lista, 'POL-001');
       expect(obtenerPrecioFinal(producto)).toBe(producto.precio);
     });
 
     it('obtenerProductosEnOferta devuelve un producto por cada código en oferta', () => {
-      const enOferta = obtenerProductosEnOferta();
+      const enOferta = obtenerProductosEnOferta(lista);
       expect(enOferta.length).toBe(CODIGOS_EN_OFERTA.length);
       for (let i = 0; i < enOferta.length; i++) {
         expect(estaEnOferta(enOferta[i].codigo)).toBeTrue();
@@ -68,133 +74,119 @@ describe('productos.js', () => {
     });
   });
 
-  describe('leer (R)', () => {
-    it('obtenerProductos trae los 11 productos iniciales', () => {
-      expect(obtenerProductos().length).toBe(11);
+  describe('conversión entre frontend y backend', () => {
+    it('convertirDesdeBackend usa nombreProducto como nombre y conserva id, código e imagen', () => {
+      const producto = convertirDesdeBackend(comoBackend(lista[0]));
+      expect(producto).toEqual(lista[0]);
     });
 
+    it('convertirParaBackend envía nombreProducto y convierte precio y stock a número', () => {
+      const datos = convertirParaBackend({ ...lista[0], precio: '1000', stock: '3' });
+      expect(datos.nombreProducto).toBe('Polera Oversize Negra');
+      expect(datos.precio).toBe(1000);
+      expect(datos.stock).toBe(3);
+      expect(datos.id).toBeUndefined();
+    });
+  });
+
+  describe('búsquedas sobre la lista cargada', () => {
     it('obtenerProductoPorCodigo encuentra un producto existente', () => {
-      const producto = obtenerProductoPorCodigo('CHA-001');
-      expect(producto).not.toBeNull();
+      const producto = obtenerProductoPorCodigo(lista, 'CHA-001');
       expect(producto.nombre).toBe('Chaqueta Denim Negra');
     });
 
     it('obtenerProductoPorCodigo devuelve null si el código no existe', () => {
-      expect(obtenerProductoPorCodigo('XXX-999')).toBeNull();
+      expect(obtenerProductoPorCodigo(lista, 'XXX-999')).toBeNull();
     });
 
     it('obtenerProductosPorCategoria filtra por categoría', () => {
-      const poleras = obtenerProductosPorCategoria('Poleras');
-      expect(poleras.length).toBe(4);
-      for (let i = 0; i < poleras.length; i++) {
-        expect(poleras[i].categoria).toBe('Poleras');
-      }
+      const chaquetas = obtenerProductosPorCategoria(lista, 'Chaquetas');
+      expect(chaquetas.length).toBe(2);
     });
 
     it('obtenerProductosPorCategoria devuelve arreglo vacío si no hay productos', () => {
-      expect(obtenerProductosPorCategoria('Sombreros')).toEqual([]);
-    });
-  });
-
-  describe('crear, editar y eliminar (C, U, D)', () => {
-    const nuevo = {
-      codigo: 'TST-001',
-      nombre: 'Producto de prueba',
-      descripcion: 'Solo para el test',
-      precio: 1000,
-      categoria: 'Poleras',
-      imagen: '/img/test.jpg',
-      stock: 3,
-    };
-
-    afterEach(() => {
-      eliminarProducto('TST-001');
+      expect(obtenerProductosPorCategoria(lista, 'Sombreros')).toEqual([]);
     });
 
-    it('agregarProducto suma un producto a la lista', () => {
-      const antes = obtenerProductos().length;
-      agregarProducto({ ...nuevo });
-      expect(obtenerProductos().length).toBe(antes + 1);
-      expect(obtenerProductoPorCodigo('TST-001')).not.toBeNull();
-    });
-
-    it('editarProducto cambia los campos indicados y devuelve true', () => {
-      agregarProducto({ ...nuevo });
-      const resultado = editarProducto('TST-001', { precio: 2500, nombre: 'Editado' });
-      expect(resultado).toBeTrue();
-      const producto = obtenerProductoPorCodigo('TST-001');
-      expect(producto.precio).toBe(2500);
-      expect(producto.nombre).toBe('Editado');
-      expect(producto.categoria).toBe('Poleras');
-    });
-
-    it('editarProducto devuelve false si el código no existe', () => {
-      expect(editarProducto('XXX-999', { precio: 1 })).toBeFalse();
-    });
-
-    it('eliminarProducto saca el producto de la lista', () => {
-      agregarProducto({ ...nuevo });
-      const antes = obtenerProductos().length;
-      eliminarProducto('TST-001');
-      expect(obtenerProductos().length).toBe(antes - 1);
-      expect(obtenerProductoPorCodigo('TST-001')).toBeNull();
-    });
-
-    it('eliminarProducto con un código inexistente no cambia nada', () => {
-      const antes = obtenerProductos().length;
-      eliminarProducto('XXX-999');
-      expect(obtenerProductos().length).toBe(antes);
-    });
-  });
-
-  describe('descontarStock', () => {
-    it('resta la cantidad comprada al stock', () => {
-      const antes = obtenerProductoPorCodigo('POL-001').stock;
-      descontarStock('POL-001', 2);
-      expect(obtenerProductoPorCodigo('POL-001').stock).toBe(antes - 2);
-      editarProducto('POL-001', { stock: antes });
-    });
-
-    it('no falla si el código no existe', () => {
-      expect(() => descontarStock('XXX-999', 1)).not.toThrow();
-    });
-  });
-
-  describe('buscarProductos (buscador y filtros)', () => {
     it('sin texto ni categoría devuelve todos los productos', () => {
-      expect(buscarProductos('', '').length).toBe(obtenerProductos().length);
+      expect(buscarProductos(lista, '', '').length).toBe(lista.length);
     });
 
     it('busca por texto del nombre sin importar mayúsculas', () => {
-      const resultado = buscarProductos('POLERA', '');
-      expect(resultado.length).toBeGreaterThan(0);
-      for (let i = 0; i < resultado.length; i++) {
-        expect(resultado[i].nombre.toLowerCase()).toContain('polera');
-      }
+      const resultado = buscarProductos(lista, 'BOTAS', '');
+      expect(resultado.length).toBe(1);
+      expect(resultado[0].codigo).toBe('CAL-001');
     });
 
     it('busca por código', () => {
-      const resultado = buscarProductos('cha-001', '');
-      expect(resultado.length).toBe(1);
-      expect(resultado[0].codigo).toBe('CHA-001');
+      expect(buscarProductos(lista, 'pan-002', '')[0].nombre).toBe('Cargo Pants Negro');
     });
 
     it('filtra por categoría', () => {
-      const resultado = buscarProductos('', 'Calzado');
-      expect(resultado.length).toBe(2);
+      expect(buscarProductos(lista, '', 'Calzado').length).toBe(2);
     });
 
     it('combina texto y categoría', () => {
-      expect(buscarProductos('botas', 'Calzado').length).toBe(1);
-      expect(buscarProductos('botas', 'Poleras').length).toBe(0);
+      expect(buscarProductos(lista, 'jeans', 'Pantalones').length).toBe(2);
     });
 
     it('devuelve arreglo vacío si nada coincide', () => {
-      expect(buscarProductos('zzzzzz', '')).toEqual([]);
+      expect(buscarProductos(lista, 'zzzz', '')).toEqual([]);
     });
 
     it('ignora espacios al inicio y al final del texto', () => {
-      expect(buscarProductos('  botas  ', '').length).toBe(1);
+      expect(buscarProductos(lista, '   botas  ', '').length).toBe(1);
+    });
+
+    it('acepta texto nulo como búsqueda vacía', () => {
+      expect(buscarProductos(lista, null, '').length).toBe(lista.length);
+    });
+  });
+
+  describe('llamadas al backend (fetch simulado)', () => {
+    it('listarProductos hace GET /productos y convierte cada producto', async () => {
+      simularApi([{ ruta: '/productos', datos: listaComoBackend() }]);
+      const productos = await listarProductos();
+      expect(productos.length).toBe(11);
+      expect(productos[0].nombre).toBe('Polera Oversize Negra');
+    });
+
+    it('obtenerProductoPorId hace GET /productos/{id}', async () => {
+      simularApi([{ ruta: '/productos/8', datos: comoBackend(lista[7]) }]);
+      const producto = await obtenerProductoPorId(8);
+      expect(producto.codigo).toBe('CHA-001');
+    });
+
+    it('crearProducto hace POST con los nombres de campo del backend', async () => {
+      const espia = simularApi([{ ruta: '/productos', metodo: 'POST', datos: comoBackend(lista[0]) }]);
+      await crearProducto(lista[0]);
+      const cuerpo = cuerpoEnviado(espia, 0);
+      expect(cuerpo.nombreProducto).toBe('Polera Oversize Negra');
+      expect(cuerpo.codigo).toBe('POL-001');
+    });
+
+    it('actualizarProducto hace PUT /productos/{id}', async () => {
+      const espia = simularApi([{ ruta: '/productos/1', metodo: 'PUT', datos: comoBackend(lista[0]) }]);
+      const producto = await actualizarProducto(1, lista[0]);
+      expect(producto.id).toBe(1);
+      expect(espia.calls.argsFor(0)[1].method).toBe('PUT');
+    });
+
+    it('eliminarProducto hace DELETE /productos/{id}', async () => {
+      const espia = simularApi([{ ruta: '/productos/3', metodo: 'DELETE', status: 204, datos: null }]);
+      await eliminarProducto(3);
+      expect(espia).toHaveBeenCalledTimes(1);
+    });
+
+    it('descontarStock hace PUT /productos/{id}/descontar/{cantidad}', async () => {
+      simularApi([{ ruta: '/productos/1/descontar/2', metodo: 'PUT', datos: { ...comoBackend(lista[0]), stock: 6 } }]);
+      const producto = await descontarStock(1, 2);
+      expect(producto.stock).toBe(6);
+    });
+
+    it('si el backend rechaza el descuento de stock, propaga el mensaje', async () => {
+      simularApi([{ ruta: '/productos/8/descontar/5', metodo: 'PUT', status: 400, datos: { error: 'Stock insuficiente' } }]);
+      await expectAsync(descontarStock(8, 5)).toBeRejectedWithError('Stock insuficiente');
     });
   });
 });

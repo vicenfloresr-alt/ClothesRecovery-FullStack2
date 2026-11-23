@@ -1,7 +1,17 @@
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import Login from './Login';
 import { SesionProvider } from '../context/SesionContext';
+import { simularApi, cuerpoEnviado } from '../test-utils/simularApi';
+
+const respuestaCliente = {
+  id: 3,
+  nombre: 'Pixu',
+  username: 'pixu@clothesrecovery.cl',
+  rol: 'CLIENTE',
+  clienteId: 2,
+  token: 'token-cliente',
+};
 
 function montar() {
   render(
@@ -10,6 +20,7 @@ function montar() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<h1>PAGINA-INICIO</h1>} />
+          <Route path="/admin" element={<h1>PAGINA-ADMIN</h1>} />
         </Routes>
       </MemoryRouter>
     </SesionProvider>
@@ -22,24 +33,55 @@ function iniciarSesion(correo, clave) {
   fireEvent.submit(screen.getByLabelText('Correo').closest('form'));
 }
 
-describe('Login', () => {
+describe('Login (contra el backend)', () => {
   beforeEach(() => localStorage.clear());
   afterEach(() => {
     cleanup();
     localStorage.clear();
   });
 
-  it('con credenciales correctas navega al inicio', () => {
+  it('envía correo y contraseña a /auth/login', async () => {
+    const espia = simularApi([{ ruta: '/auth/login', metodo: 'POST', datos: respuestaCliente }]);
     montar();
     iniciarSesion('pixu@clothesrecovery.cl', '12345');
-    expect(screen.getByText('PAGINA-INICIO')).toBeTruthy();
+    await screen.findByText('PAGINA-INICIO');
+    expect(cuerpoEnviado(espia, 0)).toEqual({ username: 'pixu@clothesrecovery.cl', password: '12345' });
   });
 
-  it('con clave incorrecta muestra el mensaje de error y no navega', () => {
+  it('un CLIENTE con credenciales correctas navega al inicio', async () => {
+    simularApi([{ ruta: '/auth/login', metodo: 'POST', datos: respuestaCliente }]);
+    montar();
+    iniciarSesion('pixu@clothesrecovery.cl', '12345');
+    expect(await screen.findByText('PAGINA-INICIO')).toBeTruthy();
+  });
+
+  it('un ADMIN navega al panel de administración', async () => {
+    simularApi([{ ruta: '/auth/login', metodo: 'POST', datos: { ...respuestaCliente, rol: 'ADMIN', clienteId: null } }]);
+    montar();
+    iniciarSesion('admin@clothesrecovery.cl', 'admin123');
+    expect(await screen.findByText('PAGINA-ADMIN')).toBeTruthy();
+  });
+
+  it('un VENDEDOR también navega al panel', async () => {
+    simularApi([{ ruta: '/auth/login', metodo: 'POST', datos: { ...respuestaCliente, rol: 'VENDEDOR', clienteId: null } }]);
+    montar();
+    iniciarSesion('vendedor@clothesrecovery.cl', 'vendedor123');
+    expect(await screen.findByText('PAGINA-ADMIN')).toBeTruthy();
+  });
+
+  it('con clave incorrecta (401) muestra el mensaje de error y no navega', async () => {
+    simularApi([{ ruta: '/auth/login', metodo: 'POST', status: 401, datos: { error: 'Usuario o contraseña incorrectos' } }]);
     montar();
     iniciarSesion('pixu@clothesrecovery.cl', 'mala');
-    expect(screen.getByText('Correo o contraseña incorrectos.')).toBeTruthy();
+    expect(await screen.findByText('Correo o contraseña incorrectos.')).toBeTruthy();
     expect(screen.queryByText('PAGINA-INICIO')).toBeNull();
+  });
+
+  it('si el backend está apagado avisa que no hay conexión', async () => {
+    simularApi([{ ruta: '/auth/login', metodo: 'POST', falla: true }]);
+    montar();
+    iniciarSesion('pixu@clothesrecovery.cl', '12345');
+    expect(await screen.findByText(/No se pudo conectar con el servidor/)).toBeTruthy();
   });
 
   it('no muestra el error antes de enviar el formulario', () => {
@@ -47,19 +89,28 @@ describe('Login', () => {
     expect(screen.queryByText('Correo o contraseña incorrectos.')).toBeNull();
   });
 
-  it('con credenciales correctas guarda la sesión (sin la contraseña)', () => {
-    const espia = spyOn(Storage.prototype, 'setItem').and.callThrough();
+  it('con credenciales correctas guarda la sesión con el token (sin la contraseña)', async () => {
+    simularApi([{ ruta: '/auth/login', metodo: 'POST', datos: respuestaCliente }]);
     montar();
     iniciarSesion('pixu@clothesrecovery.cl', '12345');
-    expect(espia).toHaveBeenCalledWith('sesion-clothesrecovery', jasmine.any(String));
+    await screen.findByText('PAGINA-INICIO');
+    await waitFor(() => {
+      if (localStorage.getItem('sesion-clothesrecovery') === null) {
+        throw new Error('la sesión aún no se guarda');
+      }
+    });
     const guardado = JSON.parse(localStorage.getItem('sesion-clothesrecovery'));
     expect(guardado.correo).toBe('pixu@clothesrecovery.cl');
+    expect(guardado.token).toBe('token-cliente');
+    expect(guardado.rol).toBe('CLIENTE');
     expect(guardado.password).toBeUndefined();
   });
 
-  it('con clave incorrecta no guarda ninguna sesión', () => {
+  it('con clave incorrecta no guarda ninguna sesión', async () => {
+    simularApi([{ ruta: '/auth/login', metodo: 'POST', status: 401, datos: { error: 'x' } }]);
     montar();
     iniciarSesion('pixu@clothesrecovery.cl', 'mala');
+    await screen.findByText('Correo o contraseña incorrectos.');
     expect(localStorage.getItem('sesion-clothesrecovery')).toBeNull();
   });
 });
