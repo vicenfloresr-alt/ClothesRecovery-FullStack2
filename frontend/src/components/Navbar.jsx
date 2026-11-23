@@ -22,6 +22,8 @@ function Navbar() {
     }
   }
 
+  const puedeVerPanel = usuario !== null && (usuario.rol === 'ADMIN' || usuario.rol === 'VENDEDOR');
+
   function manejarCierreSesion() {
     cerrarSesion();
     navigate('/');
@@ -56,6 +58,9 @@ function Navbar() {
             ) : (
               <>
                 <span className="atributo ms-2 d-none d-lg-inline-block">Hola, {usuario.nombre}</span>
+                {puedeVerPanel && (
+                  <NavLink to="/admin" className="btn btn-primario ms-2 d-none d-lg-inline-block">Panel</NavLink>
+                )}
                 <button type="button" className="btn btn-secundario ms-2 d-none d-lg-inline-block" onClick={manejarCierreSesion}>
                   Cerrar sesión
                 </button>
@@ -146,6 +151,9 @@ function Navbar() {
               </>
             ) : (
               <li className="mb-3">
+                {puedeVerPanel && (
+                  <NavLink to="/admin" className="btn btn-primario w-100 mb-3" data-bs-dismiss="offcanvas">Panel</NavLink>
+                )}
                 <button type="button" className="btn btn-secundario w-100" data-bs-dismiss="offcanvas" onClick={manejarCierreSesion}>
                   Cerrar sesión ({usuario.nombre})
                 </button>
