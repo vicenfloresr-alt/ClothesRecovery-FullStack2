@@ -38,6 +38,8 @@ public class ProductoService {
             producto.setStock(productoActualizado.getStock());
             producto.setCategoria(productoActualizado.getCategoria());
             producto.setTalla(productoActualizado.getTalla());
+            producto.setCodigo(productoActualizado.getCodigo());
+            producto.setImagen(productoActualizado.getImagen());
 
             return productoRepository.save(producto);
         }
@@ -47,5 +49,25 @@ public class ProductoService {
 
     public void eliminarProducto(Long id) {
         productoRepository.deleteById(id);
+    }
+
+    public Producto descontarStock(Long id, Integer cantidad) {
+
+        if (cantidad == null || cantidad <= 0) {
+            throw new StockInsuficienteException("La cantidad debe ser mayor a 0");
+        }
+
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new StockInsuficienteException("No existe el producto con id " + id));
+
+        if (producto.getStock() < cantidad) {
+            throw new StockInsuficienteException(
+                    "Stock insuficiente para " + producto.getNombreProducto() +
+                            ". Disponible: " + producto.getStock());
+        }
+
+        producto.setStock(producto.getStock() - cantidad);
+
+        return productoRepository.save(producto);
     }
 }

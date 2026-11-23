@@ -2,6 +2,7 @@ package com.clothesrecovery.catalogo.controller;
 
 import com.clothesrecovery.catalogo.model.Producto;
 import com.clothesrecovery.catalogo.service.ProductoService;
+import com.clothesrecovery.catalogo.service.StockInsuficienteException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,13 +10,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/productos")
+@RequestMapping("/api/v1/productos")
 @Tag(name = "Productos", description = "Operaciones relacionadas con el catálogo de productos")
 public class ProductoController {
 
@@ -61,6 +64,21 @@ public class ProductoController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    @Operation(summary = "Descontar stock de un producto al comprar")
+    @PutMapping("/{id}/descontar/{cantidad}")
+    public ResponseEntity<?> descontarStock(
+            @PathVariable Long id,
+            @PathVariable Integer cantidad) {
+
+        try {
+            return ResponseEntity.ok(productoService.descontarStock(id, cantidad));
+
+        } catch (StockInsuficienteException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
 
     @Operation(summary = "Eliminar un producto")

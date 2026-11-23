@@ -3,6 +3,7 @@ package com.clothesrecovery.catalogo;
 import com.clothesrecovery.catalogo.model.Producto;
 import com.clothesrecovery.catalogo.repository.ProductoRepository;
 import com.clothesrecovery.catalogo.service.ProductoService;
+import com.clothesrecovery.catalogo.service.StockInsuficienteException;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +35,8 @@ class ProductoServiceTest {
         p.setStock(10);
         p.setCategoria("Ropa");
         p.setTalla("M");
+        p.setCodigo("POL-001");
+        p.setImagen("/img/productos/polera1.jpg");
         return p;
     }
 
@@ -90,6 +93,37 @@ class ProductoServiceTest {
     void actualizarProducto_noExistente_debeRetornarNull() {
         when(productoRepository.findById(99L)).thenReturn(Optional.empty());
         assertNull(productoService.actualizarProducto(99L, new Producto()));
+    }
+
+    @Test
+    void descontarStock_suficiente_debeDescontar() {
+        Producto p = crearProducto();
+        when(productoRepository.findById(1L)).thenReturn(Optional.of(p));
+        when(productoRepository.save(any(Producto.class))).thenReturn(p);
+
+        Producto result = productoService.descontarStock(1L, 3);
+        assertEquals(7, result.getStock());
+    }
+
+    @Test
+    void descontarStock_insuficiente_debeLanzarExcepcion() {
+        when(productoRepository.findById(1L)).thenReturn(Optional.of(crearProducto()));
+        assertThrows(StockInsuficienteException.class,
+                () -> productoService.descontarStock(1L, 50));
+        verify(productoRepository, never()).save(any(Producto.class));
+    }
+
+    @Test
+    void descontarStock_cantidadInvalida_debeLanzarExcepcion() {
+        assertThrows(StockInsuficienteException.class,
+                () -> productoService.descontarStock(1L, 0));
+    }
+
+    @Test
+    void descontarStock_productoNoExiste_debeLanzarExcepcion() {
+        when(productoRepository.findById(99L)).thenReturn(Optional.empty());
+        assertThrows(StockInsuficienteException.class,
+                () -> productoService.descontarStock(99L, 1));
     }
 
     @Test

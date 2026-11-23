@@ -34,4 +34,9 @@ public class Producto {
     @Column(nullable = false)
     private String talla;
 
+    @Column(unique = true)
+    private String codigo;
+
+    private String imagen;
+
 }
