@@ -9,7 +9,7 @@ backend de microservicios en Spring Boot, autenticación JWT por roles y documen
 |---|---|
 | `frontend/` | Tienda en React + Bootstrap. Consume la API con `fetch`. Pruebas con Jasmine y Karma. |
 | `backend/` | 10 microservicios Spring Boot + API Gateway, cada uno con su base de datos MySQL. |
-| `docs/` | ERS y documento de cobertura de pruebas. |
+| `docs/` | ERS (v3.0), documento de cobertura de pruebas (v3.0) y capturas usadas en ambos. |
 
 ## Cómo ejecutarlo (Windows)
 
